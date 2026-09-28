@@ -1,0 +1,78 @@
+/* ============================================================
+   BASE
+   Mobile-first. El tamaño raíz escala con el viewport (vmin),
+   así la misma UI crece sola en tablets, monitores y TVs.
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Celular chico ≈ 17px · celular ≈ 18px · TV 1080p ≈ 24px · 4K ≈ 28px */
+  font-size: clamp(1.0625rem, 0.85rem + 1vmin, 1.75rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  line-height: 1.45;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+}
+
+a {
+  color: var(--brand);
+}
+
+a,
+button {
+  touch-action: manipulation;
+}
+
+/* Foco siempre visible y grueso: esencial para accesibilidad */
+:focus-visible {
+  outline: 0.22rem solid var(--brand);
+  outline-offset: 0.12rem;
+  border-radius: 0.3rem;
+}
+
+/* Skip link (visible sólo al recibir foco por teclado) */
+.skip-link {
+  position: absolute;
+  top: -6rem;
+  left: 0.75rem;
+  z-index: 10;
+  background: var(--ink);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.6rem;
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+/* Respeto por usuarios sensibles al movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

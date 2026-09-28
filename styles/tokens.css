@@ -1,0 +1,32 @@
+/* ============================================================
+   TOKENS DE DISEÑO
+   Paleta reducida, cálida y sobria. Todo lo demás hereda de acá.
+   ============================================================ */
+
+:root {
+  /* Superficies */
+  --paper: #faf6ef;        /* fondo general, papel cálido */
+  --card: #ffffff;         /* tarjetas */
+  --highlight: #f6ecd9;    /* avisos suaves (disponibilidad) */
+
+  /* Tinta */
+  --ink: #1c1712;          /* texto principal (casi negro cálido) */
+  --ink-soft: #57493c;     /* texto secundario */
+  --line: #e5dac8;         /* bordes suaves */
+
+  /* Acción principal (terracota oscuro, contraste AA con blanco) */
+  --brand: #8a3300;
+  --brand-strong: #6e2800;
+
+  /* Estados (siempre acompañados de texto, nunca color solo) */
+  --ok: #177245;           /* abierto ahora */
+  --warn: #9a6200;         /* abre más tarde */
+  --bad: #b3261e;          /* cerrado */
+
+  /* Forma */
+  --radius: 1.25rem;
+
+  /* Tipografía: system stack legible, sin descargas externas */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
+    "Helvetica Neue", Arial, sans-serif;
+}

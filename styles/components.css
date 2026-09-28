@@ -1,0 +1,280 @@
+/* ============================================================
+   COMPONENTES — Home y resultados
+   Botones enormes, alto contraste, pocos elementos por pantalla.
+   ============================================================ */
+
+/* ---------- Home ---------- */
+
+.home {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.home-header {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 1.75rem 1rem 1.25rem;
+}
+
+.app-name {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 1.2rem + 2.2vmin, 3rem);
+  letter-spacing: 0.01em;
+}
+
+.service-grid {
+  flex: 1;
+  align-content: start;
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 28rem) {
+  .service-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 58rem) {
+  .service-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.service-btn {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  min-height: 5.75rem;
+  padding: 1rem 1.2rem;
+  background: var(--card);
+  border: 0.16rem solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease,
+    border-color 120ms ease;
+}
+
+.service-btn__icon {
+  font-size: 2.7rem;
+  line-height: 1;
+}
+
+.service-btn__label {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+@media (hover: hover) {
+  .service-btn:hover {
+    border-color: var(--brand);
+  }
+}
+
+/* Feedback inmediato al tocar */
+.service-btn:active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.home-footer {
+  padding: 1.4rem 1rem 1.8rem;
+  text-align: center;
+}
+
+.board-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 0.5rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* ---------- Resultados ---------- */
+
+.page {
+  width: 100%;
+  max-width: 62rem;
+  margin-inline: auto;
+  padding: 0 1rem 3rem;
+}
+
+.page-header {
+  padding: 1rem 0 0.75rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.page-title {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.6rem, 1.2rem + 1.8vmin, 2.6rem);
+}
+
+.nearby-note {
+  margin: 0.4rem 0 1.1rem;
+  font-weight: 700;
+}
+
+.nearby-note--hint {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.place-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 46rem) {
+  .place-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---------- Tarjeta de lugar ---------- */
+
+.place {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  background: var(--card);
+  border: 0.16rem solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.2rem 1.3rem;
+}
+
+.place__name {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.place__row {
+  display: flex;
+  gap: 0.55rem;
+  align-items: baseline;
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.place__notes {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1rem;
+}
+
+.place__availability {
+  margin: 0.15rem 0 0;
+  padding: 0.55rem 0.8rem;
+  background: var(--highlight);
+  border-radius: 0.8rem;
+  font-weight: 600;
+}
+
+/* Estado: color + punto + texto (el color nunca es el único indicador) */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.status__dot {
+  flex: none;
+  width: 0.85em;
+  height: 0.85em;
+  margin-top: 0.1em;
+  border-radius: 50%;
+}
+
+.status--open {
+  color: var(--ok);
+}
+.status--open .status__dot {
+  background: var(--ok);
+}
+
+.status--soon {
+  color: var(--warn);
+}
+.status--soon .status__dot {
+  background: var(--warn);
+}
+
+.status--closed {
+  color: var(--bad);
+}
+.status--closed .status__dot {
+  background: var(--bad);
+}
+
+.status__sub {
+  font-weight: 600;
+}
+
+/* Botón principal de cada tarjeta: grande e imposible de errar */
+.btn-directions {
+  margin-top: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.9rem;
+  border-radius: 1rem;
+  background: var(--brand);
+  color: #fff;
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+
+.btn-directions:active {
+  background: var(--brand-strong);
+}
+
+/* ---------- Estados de carga / error / vacío ---------- */
+
+.loading,
+.error,
+.empty {
+  padding: 1.5rem 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.error {
+  color: var(--bad);
+}
