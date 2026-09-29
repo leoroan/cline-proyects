@@ -147,6 +147,68 @@ t('ancla interna no rompe la navegación', () => {
   assert.match(appEl.innerHTML, /¿QUÉ NECESITÁS\?/);
 });
 
+console.log('\nSmoke — gestión (#/admin):');
+
+location.hash = '#/admin';
+await handlers.hashchange();
+await settle();
+t('sin sesión, la gestión pide usuario y clave', () => {
+  assert.match(appEl.innerHTML, /Zona de gestión/);
+  assert.match(appEl.innerHTML, /USUARIO/);
+  assert.match(appEl.innerHTML, /CLAVE/);
+});
+
+const { login, logout } = await import('../src/admin/auth.service.js');
+login('admin', 'comedor2024');
+location.hash = '#/admin';
+await handlers.hashchange();
+await settle();
+t('con sesión se ve el menú de gestión', () => {
+  assert.match(appEl.innerHTML, /AGREGAR LUGAR/);
+  assert.match(appEl.innerHTML, /LUGARES/);
+  assert.match(appEl.innerHTML, /SECCIONES/);
+  assert.match(appEl.innerHTML, /EQUIPO/);
+  assert.match(appEl.innerHTML, /COMPARTIR DATOS/);
+});
+
+location.hash = '#/admin/nuevo';
+await handlers.hashchange();
+await settle();
+t('el formulario pide nombre, dirección y qué ofrece', () => {
+  assert.match(appEl.innerHTML, /NOMBRE DEL LUGAR/);
+  assert.match(appEl.innerHTML, /DIRECCIÓN/);
+  assert.match(appEl.innerHTML, /QUÉ OFRECE/);
+  assert.match(appEl.innerHTML, /USAR ESTE LINK/);
+  assert.match(appEl.innerHTML, /USAR MI UBICACIÓN ACTUAL/);
+});
+
+location.hash = '#/admin/lugares';
+await handlers.hashchange();
+await settle();
+t('la lista muestra lugares con su estado', () => {
+  assert.match(appEl.innerHTML, /Comedor San José/);
+  assert.match(appEl.innerHTML, /ACTIVO/);
+  assert.match(appEl.innerHTML, /EDITAR/);
+  assert.match(appEl.innerHTML, /DESACTIVAR/);
+});
+
+location.hash = '#/admin/datos';
+await handlers.hashchange();
+await settle();
+t('compartir datos ofrece sacar y traer', () => {
+  assert.match(appEl.innerHTML, /SACAR LOS DATOS/);
+  assert.match(appEl.innerHTML, /TRAER DATOS/);
+});
+
+logout();
+location.hash = '#/';
+await handlers.hashchange();
+await settle();
+t('cerrar sesión vuelve a la app pública', () => {
+  assert.match(appEl.innerHTML, /¿QUÉ NECESITÁS\?/);
+});
+
+
 if (failed) {
   console.error(`\n${failed} test(s) fallaron`);
   process.exit(1);

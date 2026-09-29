@@ -5,6 +5,8 @@
    - Si la persona no la comparte, la app funciona igual.
    - "CÓMO LLEGAR" abre la app de mapas del teléfono con la
      ruta A PIE (la mayoría de los usuarios camina).
+   - Si un lugar no tiene coordenadas (cargado a mano sin
+     link de Maps), el destino es la dirección escrita.
      No construimos un mapa propio.
    ============================================================ */
 
@@ -21,6 +23,11 @@ export function getCurrentPosition({ timeout = 6000 } = {}) {
       { timeout, maximumAge: 5 * 60 * 1000, enableHighAccuracy: false }
     );
   });
+}
+
+/** ¿El lugar tiene coordenadas utilizables? */
+export function hasCoords(place) {
+  return Number.isFinite(place?.latitude) && Number.isFinite(place?.longitude);
 }
 
 /** Distancia en metros entre dos puntos { lat, lng } (haversine). */
@@ -43,9 +50,12 @@ export function formatDistance(meters) {
   return `a ${km.replace(',0', '')} km`;
 }
 
-/** URL universal: abre Google Maps (app o web) con ruta a pie. */
+/** URL universal: abre Google Maps (app o web) con ruta a pie.
+    Con coordenadas apunta exacto; sin ellas busca la dirección. */
 export function directionsUrl(place) {
-  const destination = `${place.latitude},${place.longitude}`;
+  const destination = hasCoords(place)
+    ? `${place.latitude},${place.longitude}`
+    : String(place.address ?? '');
   return (
     'https://www.google.com/maps/dir/?api=1' +
     `&destination=${encodeURIComponent(destination)}` +

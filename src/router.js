@@ -12,7 +12,8 @@
      #/                 → home (¿QUÉ NECESITÁS?)
      #/s/:service       → resultados de un servicio
      #/guardar/:placeId → guarda el lugar y muestra confirmación
-     #/panel            → modo pantalla (TV / monitor)
+     #/panel            → modo pantalla / cartelería (TV)
+     #/admin[/…]        → zona de gestión (OCULTA, con clave)
 
    parseRoute() devuelve null para hashes que no son rutas
    (ej. "#contenido" del skip link): el main los ignora.
@@ -31,6 +32,13 @@ export function parseRoute() {
   }
   if (parts[0] === 'guardar' && parts[1]) {
     return { name: 'save', placeId: decodeURIComponent(parts[1]) };
+  }
+  if (parts[0] === 'admin') {
+    return {
+      name: 'admin',
+      sub: parts[1] ?? 'menu',
+      param: parts[2] ? decodeURIComponent(parts[2]) : null,
+    };
   }
   if (parts[0] === 'panel') return { name: 'board' };
 

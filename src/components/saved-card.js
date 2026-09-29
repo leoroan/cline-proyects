@@ -8,7 +8,7 @@
    ============================================================ */
 
 import { esc } from '../utils/html.js';
-import { serviceById } from '../config/services.js';
+import { getServiceById as serviceById } from '../services/catalog.service.js';
 import { getServiceStatus } from '../services/time.service.js';
 import { directionsUrl } from '../services/geo.service.js';
 

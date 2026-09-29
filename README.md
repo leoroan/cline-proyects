@@ -30,6 +30,7 @@ También funciona con cualquier hosting estático (Netlify, GitHub Pages, nginx�
 | `#/s/:id` | Resultados de un servicio (ej. `#/s/lunch`)       |
 | `#/panel` | **Modo pantalla** para TV/monitor informativo     |
 | `#/guardar/:id` | Destino de los QR: guarda el lugar y muestra confirmación |
+| `#/admin` | Zona de gestión (oculta, con usuario y clave) |
 
 El modo pantalla es **cartelería**: alto fijo, SIN scroll — todo lo que no entra rota en carruseles sincronizados (cada 6 s), asi TODO esta a la vista. Arriba muestra el turno de comida (AHORA / PRÓXIMO / MAÑANA, segun hora de Argentina GMT-3) con los lugares que lo sirven hoy; abajo, el resto de los servicios en tarjetas. Relee los datos cada 30 s, pide WakeLock para que la TV no se apague y funciona en vertical u horizontal.
 
@@ -65,6 +66,13 @@ src/
     home.view.js  results.view.js  board.view.js  saved.view.js
   vendor/
     qrcodegen.js       # generador QR (Nayuki, MIT) vendored, sin deps
+  admin/
+    controller.js      # zona de gestión: rutas, clicks, formularios
+    auth.service.js    # usuarios y sesión (config + localStorage)
+    data.service.js    # lugares/secciones locales, overrides, export-import
+    maps.js            # links de Google Maps → coordenadas
+    store.js           # capa mínima sobre localStorage
+    views/             # login, lugares+formulario, secciones/equipo/datos
 tests/             # time + saved + smoke, todo sin dependencias
 scripts/serve.mjs  # servidor estático para desarrollo
 ```
@@ -176,6 +184,26 @@ La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin 
 - Contraste AA (texto y estados ≥ 4.5:1), `prefers-reduced-motion` respetado.
 - Tipografía y grillas fluidas que se adaptan solas a cualquier viewport (ver "Responsive").
 
-## Qué NO tiene (a propósito)
+## 🔐 Zona de gestión (`#/admin`)
+
+Ruta **oculta** (no hay enlace público): hay que escribir `#/admin` a mano. Pide usuario y clave.
+
+- **Credenciales por defecto**: usuario `admin`, clave `comedor2024` — cambiarlas en `src/config/admin.js` antes de publicar.
+- **Es un cerrojo simbólico, no seguridad real**: sin backend, las claves viajan en el código. Alcanza para que nadie toque la cartelería por curiosidad; no para proteger datos sensibles (que no hay).
+- La sesión queda en el aparato hasta tocar CERRAR SESIÓN.
+
+Qué se puede hacer (todo con lenguaje declarativo, para personas sin experiencia informática):
+
+| Pantalla | Qué hace |
+| -------- | -------- |
+| ➕ AGREGAR LUGAR | Nombre, dirección, ubicación en el mapa, qué ofrece (días y horarios por servicio), datos opcionales, activo/en pausa |
+| 📋 LUGARES | Ver todos, EDITAR, ACTIVAR/DESACTIVAR, BORRAR (en dos toques, sin diálogos) |
+| 🧩 SECCIONES | Crear categorías nuevas (DUCHAS, VIANDAS…) con ícono; aparecen solas en la app cuando un lugar las ofrece |
+| 👥 EQUIPO | Sumar colaboradores con su usuario y clave (cada punto de la ciudad puede tener quien cargue sus lugares) |
+| 📤 COMPARTIR DATOS | Exportar (copiar texto o descargar archivo) e importar en otro aparato; se SUMAN sin borrar nada |
+
+**Ubicación en el mapa sin APIs ni claves**: se pega el link de Google Maps (Compartir → Copiar link) y las coordenadas se extraen solas; o botón "USAR MI UBICACIÓN ACTUAL" (GPS); o nada — el CÓMO LLEGAR usa la dirección escrita.
+
+**Dónde viven los datos**: lugares cargados, secciones nuevas, usuarios del equipo y cambios sobre lugares base (editar/desactivar/borrar) se guardan en `localStorage` del aparato. La fusión con los datos base ocurre en `places.service.js` (overrides: el origen nunca se toca). Sin internet, sin servidor, sin costo.## Qué NO tiene (a propósito)
 
 Login · dashboards · estadísticas · formularios · perfiles · feeds · publicidad · gamificación · mapa embebido. Si algo no ayuda a una persona a conseguir comida, ropa o dónde dormir, no está.
