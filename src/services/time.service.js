@@ -162,3 +162,51 @@ export function getShiftState(shifts, now = new Date()) {
     shift: parsed.slice().sort((a, b) => a.start - b.start)[0],
   };
 }
+
+/**
+ * Lista de turnos candidatos EN ORDEN desde "ahora", para la
+ * cartelería: si el turno actual no tiene lugares, se cae al
+ * siguiente que sí tenga (hoy o mañana).
+ *
+ * Devuelve [{ shift, when: 'HOY'|'MAÑANA', state: 'now'|'next'|'tomorrow' }]
+ *  - state 'now':      estamos dentro de ese turno
+ *  - state 'next':     ese turno viene hoy más tarde
+ *  - state 'tomorrow': ese turno es mañana
+ * [] si no hay turnos configurados.
+ */
+export function getShiftCandidates(shifts, now = new Date()) {
+  const current = getShiftState(shifts, now);
+  if (!current) return [];
+
+  const sorted = (Array.isArray(shifts) ? shifts : [])
+    .filter((s) => s && s.from && s.to)
+    .slice()
+    .sort((a, b) => toMinutes(a.from) - toMinutes(b.from));
+  const currentIdx = sorted.findIndex(
+    (s) => s.serviceId === current.shift.serviceId
+  );
+  if (currentIdx === -1) return [];
+
+  const result = [];
+  for (let k = 0; k < sorted.length; k++) {
+    const idx = (currentIdx + k) % sorted.length;
+    const shift = sorted[idx];
+    let when;
+    let state;
+    if (current.state === 'tomorrow') {
+      when = 'MAÑANA';
+      state = 'tomorrow';
+    } else if (k === 0) {
+      when = 'HOY';
+      state = current.state; // 'now' o 'next'
+    } else if (idx > currentIdx) {
+      when = 'HOY';
+      state = 'next';
+    } else {
+      when = 'MAÑANA';
+      state = 'tomorrow';
+    }
+    result.push({ shift, when, state });
+  }
+  return result;
+}

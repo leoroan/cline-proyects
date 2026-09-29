@@ -2,7 +2,7 @@
    Uso: node tests/time.test.mjs */
 
 import assert from 'node:assert/strict';
-import { getServiceStatus, argentinaTime, getShiftState } from '../src/services/time.service.js';
+import { getServiceStatus, argentinaTime, getShiftState, getShiftCandidates } from '../src/services/time.service.js';
 import { MEAL_SHIFTS } from '../src/config/shifts.js';
 import { SERVICES } from '../src/config/services.js';
 import { MOCK_PLACES } from '../src/data/places.mock.js';
@@ -196,4 +196,35 @@ t('hora de Argentina (GMT-3) desde UTC', () => {
 t('sin turnos configurados → null', () => {
   assert.equal(getShiftState([], new Date()), null);
   assert.equal(getShiftState(undefined, new Date()), null);
+});
+
+console.log('\nCandidatos de turno (fallback de cartelería):');
+
+t('13:00 → almuerzo HOY, luego merienda y cena HOY, desayuno MAÑANA', () => {
+  const c = getShiftCandidates(MEAL_SHIFTS, new Date(2024, 5, 3, 13, 0));
+  assert.deepEqual(
+    c.map((x) => `${x.shift.serviceId}:${x.when}:${x.state}`),
+    ['lunch:HOY:now', 'snack:HOY:next', 'dinner:HOY:next', 'breakfast:MAÑANA:tomorrow']
+  );
+});
+
+t('15:10 (entre turnos) → merienda primero, almuerzo queda para mañana', () => {
+  const c = getShiftCandidates(MEAL_SHIFTS, new Date(2024, 5, 3, 15, 10));
+  assert.equal(c[0].shift.serviceId, 'snack');
+  assert.equal(c[0].when, 'HOY');
+  assert.equal(c[0].state, 'next');
+  const last = c[c.length - 1];
+  assert.equal(last.shift.serviceId, 'lunch');
+  assert.equal(last.when, 'MAÑANA');
+});
+
+t('23:00 → todos los turnos son MAÑANA', () => {
+  const c = getShiftCandidates(MEAL_SHIFTS, new Date(2024, 5, 3, 23, 0));
+  assert.ok(c.every((x) => x.when === 'MAÑANA'));
+  assert.equal(c[0].shift.serviceId, 'breakfast');
+});
+
+t('sin turnos → lista vacía', () => {
+  assert.deepEqual(getShiftCandidates([], new Date()), []);
+  assert.deepEqual(getShiftCandidates(undefined, new Date()), []);
 });

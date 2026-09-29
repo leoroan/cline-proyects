@@ -161,7 +161,7 @@ Los turnos por defecto viven en `src/config/shifts.js` y se ajustan sin tocar la
 | MERIENDA | 15:30 → 18:00     |
 | CENA     | 18:30 → 22:00     |
 
-La cartelería los usa para titular "AHORA · ALMUERZO" (o el próximo turno) y mostrar sólo los lugares que sirven esa comida **hoy**. Los horarios reales de cada lugar siguen saliendo de sus propios datos. Los servicios que no son comidas (ropa, dormir, duchas…) aparecen abajo como tarjetas-carrusel.
+La cartelería los usa para titular "AHORA · ALMUERZO" (o el próximo turno) y mostrar sólo los lugares que sirven esa comida **hoy**. Si el turno actual no tiene lugares hoy, **cae automáticamente al siguiente turno que sí tenga** (hoy o mañana): nunca queda una pantalla vacía. Los horarios reales de cada lugar siguen saliendo de sus propios datos. Los servicios que no son comidas (ropa, dormir, duchas…) aparecen abajo como tarjetas-carrusel.
 
 ## Responsive: continuo, no breakpoints fijos
 

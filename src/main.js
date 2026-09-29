@@ -22,7 +22,7 @@ import { getPlaces } from './services/places.service.js';
 import {
   getServiceStatus,
   argentinaTime,
-  getShiftState,
+  getShiftCandidates,
 } from './services/time.service.js';
 import {
   getCurrentPosition,
@@ -200,22 +200,28 @@ async function renderBoardRoute({ focus = true } = {}) {
       rankOf(a) - rankOf(b) || (a.distance ?? Infinity) - (b.distance ?? Infinity);
     const catalog = getServices();
 
-    // Turno de comida: qué se está sirviendo (o qué sigue)
-    const shiftState = getShiftState(MEAL_SHIFTS, now);
-    const heroService = shiftState ? getServiceById(shiftState.shift.serviceId) : null;
+    // Turno de comida: el primero (desde ahora) que TENGA lugares.
+    // Si el turno actual no tiene lugares hoy, se cae al siguiente.
+    const candidates = getShiftCandidates(MEAL_SHIFTS, now);
     let hero = null;
-    if (shiftState && heroService) {
-      const wantWhen = shiftState.state === 'tomorrow' ? 'MAÑANA' : 'HOY';
+    for (const cand of candidates) {
+      const service = getServiceById(cand.shift.serviceId);
+      if (!service) continue;
       const items = places
-        .filter((p) => p.services.includes(heroService.id))
+        .filter((p) => p.services.includes(service.id))
         .map((p) => ({
           place: p,
-          status: getServiceStatus(p.schedule?.[heroService.id], now),
+          status: getServiceStatus(p.schedule?.[service.id], now),
           distance: distanceOf(boardPosition, p),
         }))
-        .filter((i) => i.status?.display?.when === wantWhen)
+        .filter((i) => i.status?.display?.when === cand.when)
         .sort(byUrgencyThenDistance);
-      hero = { ...shiftState, service: heroService, items };
+      const h = { state: cand.state, shift: cand.shift, service, items };
+      if (items.length > 0) {
+        hero = h;
+        break;
+      }
+      if (!hero) hero = h; // fallback: el primero, aunque esté vacío
     }
 
     // El resto de los servicios (ropa, dormir y cualquiera futuro)
