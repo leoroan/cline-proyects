@@ -1,21 +1,33 @@
 /* ============================================================
    MODO PANTALLA (TV / monitor informativo)
    ------------------------------------------------------------
-   Una sola mirada: qué hay hoy, dónde y a qué hora, para todos
-   los servicios. Sin interacción: se actualiza sola (main.js).
+   Una sola mirada: qué hay hoy, dónde y a qué hora.
+   Cada lugar tiene su QR con el logo de la app: la persona
+   lo escanea con su teléfono y se lo lleva guardado.
+   Sin interacción: se actualiza sola (main.js).
    ============================================================ */
 
 import { esc } from '../utils/html.js';
+import { saveLink } from '../services/saved.service.js';
+import { qrSvg } from '../components/qr.js';
 
 function boardRow({ place, status }) {
   const d = status?.display;
   const isOpen = status?.tone === 'open';
-  const hours = d ? `${isOpen ? 'AHORA · ' : ''}${d.when} · ${d.open} → ${d.close}` : 'Horario a confirmar';
+  const hours = d
+    ? `${isOpen ? 'AHORA · ' : ''}${d.when} · ${d.open} → ${d.close}`
+    : 'Horario a confirmar';
 
   return `
     <div class="board-row${isOpen ? ' board-row--open' : ''}">
-      <p class="board-row__name">${esc(place.name)}</p>
-      <p class="board-row__meta">${esc(hours)} — ${esc(place.address)}</p>
+      <div class="board-row__info">
+        <p class="board-row__name">${esc(place.name)}</p>
+        <p class="board-row__meta">${esc(hours)} — ${esc(place.address)}</p>
+      </div>
+      <div class="board-qr">
+        ${qrSvg(saveLink(place.id))}
+        <p class="board-qr__label">ESCANEAR</p>
+      </div>
     </div>`;
 }
 

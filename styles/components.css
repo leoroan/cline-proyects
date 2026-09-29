@@ -317,3 +317,130 @@
     min-height: 2.25rem;
   }
 }
+
+/* ---------- Guardar / QR ---------- */
+
+.place__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.place__actions .btn-directions {
+  margin-top: 0;
+}
+
+.btn-save {
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 0.14rem solid var(--brand);
+  border-radius: 1rem;
+  background: transparent;
+  color: var(--brand);
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.btn-save:active {
+  background: var(--highlight);
+}
+
+.btn-save.is-saved {
+  background: var(--highlight);
+  border-color: var(--line);
+  color: var(--ink-soft);
+}
+
+/* QR: sólo en pantallas más grandes que un celular.
+   (En un celular no podés escanear tu propia pantalla:
+   ahí se usa el botón GUARDAR.) */
+.qr-block {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .qr-block {
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 0.14rem dashed var(--line);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .qr-block svg {
+    display: block;
+    width: 7rem;
+    height: 7rem;
+  }
+
+  .qr-block__label {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+  }
+}
+
+/* ---------- Sección MIS LUGARES (home) ---------- */
+
+.saved-section {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: max(1rem, env(safe-area-inset-left))
+    max(1rem, env(safe-area-inset-right));
+  padding-bottom: var(--gap);
+}
+
+.saved-title {
+  margin: 0 0 0.15rem;
+  font-size: 1.3rem;
+}
+
+.saved-note {
+  margin: 0 0 0.9rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Línea por servicio dentro de una tarjeta guardada */
+.saved-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.5rem;
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.saved-line .status__dot {
+  align-self: center;
+}
+
+/* ---------- Confirmación tras escanear ---------- */
+
+.confirm-badge {
+  margin: 1.2rem 0 0.2rem;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--ok);
+}
+
+.confirm-sub {
+  margin: 0 0 1.2rem;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.confirm-back {
+  margin: 1.5rem 0 0;
+}

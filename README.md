@@ -29,6 +29,7 @@ También funciona con cualquier hosting estático (Netlify, GitHub Pages, nginx�
 | `#/`      | Home — "¿QUÉ NECESITÁS?" con las grandes acciones |
 | `#/s/:id` | Resultados de un servicio (ej. `#/s/lunch`)       |
 | `#/panel` | **Modo pantalla** para TV/monitor informativo     |
+| `#/guardar/:id` | Destino de los QR: guarda el lugar y muestra confirmación |
 
 El modo pantalla muestra todo lo que hay hoy, se actualiza solo cada 30 segundos y pide WakeLock para que la TV no se apague. Tipografía en `vmin` para leer a distancia.
 
@@ -52,11 +53,16 @@ src/
     places.service.js  # única puerta a los datos (hoy mock, mañana fetch)
     time.service.js    # lógica de horarios, pura y testeable
     geo.service.js     # ubicación, distancias, URL de "cómo llegar"
+    saved.service.js   # guardados en localStorage con vencimiento
   components/
     place-card.js      # tarjeta de lugar
+    saved-card.js      # tarjeta guardada (estado de todos sus servicios)
+    qr.js              # QR en SVG con logo de la app
   views/
-    home.view.js  results.view.js  board.view.js
-tests/             # node tests/time.test.mjs · node tests/smoke.test.mjs
+    home.view.js  results.view.js  board.view.js  saved.view.js
+  vendor/
+    qrcodegen.js       # generador QR (Nayuki, MIT) vendored, sin deps
+tests/             # time + saved + smoke, todo sin dependencias
 scripts/serve.mjs  # servidor estático para desarrollo
 ```
 
@@ -120,7 +126,16 @@ El color nunca es el único indicador: siempre acompaña texto.
 - Sin ubicación: primero los abiertos ahora.
 - **CÓMO LLEGAR** abre la app de mapas del teléfono con ruta **a pie** (URL universal de Google Maps). No hay mapa propio.
 
-## Responsive: continuo, no breakpoints fijos
+## ⭐ Guardar y llevar (QR → teléfono de la persona)
+
+Pensado para el caso real: **la pantalla grande muestra, la persona se lo lleva**.
+
+- En pantallas **más grandes que un celular** (modo pantalla/TV, y también PC o tablet), cada lugar muestra un **QR con el logo de la app**: "ESCANEAR" en el panel, "ESCANEÁ Y LLEVATELO" en las tarjetas.
+- Escanearlo abre `#/guardar/:id` en **el teléfono de la persona**: el lugar se guarda en `localStorage` (sin registro, sin cuenta, sin servidor) y aparece la confirmación al instante, con su CÓMO LLEGAR.
+- En la home se ve primero **⭐ MIS LUGARES** (lo guardado, con el estado de todos sus servicios) y después los servicios.
+- En celulares el QR no aparece (no podés escanear tu propia pantalla): en su lugar cada tarjeta tiene un botón **＋ GUARDAR**.
+- **Auto-mantenible**: cada guardado vence a los **3 días**, la limpieza ocurre sola en cada lectura y hay un tope de 10 lugares. Si el storage está corrupto, se reinicia sin romper nada.
+- El QR se genera **localmente** (`src/vendor/qrcodegen.js`, Nayuki, MIT, vendored): funciona sin internet, ideal para TVs sin conexión.## Responsive: continuo, no breakpoints fijos
 
 La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin saltos discretos:
 

@@ -1,8 +1,11 @@
 /* ============================================================
    MAIN — orquestación mínima
    ------------------------------------------------------------
-   Flujo principal en 2 toques:
-   home → servicio → CÓMO LLEGAR.
+   Flujos:
+   - home → servicio → CÓMO LLEGAR (2 toques)
+   - pantalla grande → QR → #/guardar/:id → guardado en el
+     teléfono de la persona → la home muestra primero
+     "⭐ MIS LUGARES"
 
    - Sin estado global complejo: cada cambio de ruta re-renderiza.
    - Al navegar, el foco va al título de la vista (lectores de
@@ -15,6 +18,7 @@ import { SERVICES, serviceById } from './config/services.js';
 import { getPlaces } from './services/places.service.js';
 import { getServiceStatus } from './services/time.service.js';
 import { getCurrentPosition, distanceMeters } from './services/geo.service.js';
+import { getSavedIds, isSaved, save, remove } from './services/saved.service.js';
 import { parseRoute } from './router.js';
 import { renderHome } from './views/home.view.js';
 import {
@@ -23,6 +27,7 @@ import {
   renderResultsError,
 } from './views/results.view.js';
 import { renderBoard } from './views/board.view.js';
+import { renderSavedConfirm } from './views/saved.view.js';
 
 const app = document.getElementById('app');
 
@@ -46,18 +51,25 @@ function paint(html, { focus = true } = {}) {
 
 async function renderHomeRoute() {
   let services = SERVICES;
+  let savedItems = [];
   try {
     const places = await getPlaces();
     // Sólo se muestran servicios que tienen al menos un lugar.
-    // Un servicio nuevo aparece solo cuando hay datos que lo ofrezcan.
     const withPlaces = SERVICES.filter((s) =>
       places.some((p) => p.services.includes(s.id))
     );
     if (withPlaces.length > 0) services = withPlaces;
+
+    // Lo guardado en este teléfono, primero (más reciente arriba).
+    const now = new Date();
+    savedItems = getSavedIds()
+      .map((id) => places.find((p) => p.id === id))
+      .filter(Boolean)
+      .map((place) => ({ place, now }));
   } catch {
     // Si fallan los datos, la home igual muestra el catálogo.
   }
-  paint(renderHome({ services }));
+  paint(renderHome({ services, savedItems }));
 }
 
 async function renderResultsRoute(serviceId) {
@@ -76,6 +88,7 @@ async function renderResultsRoute(serviceId) {
       getCurrentPosition(),
     ]);
     const now = new Date();
+    const savedIds = new Set(getSavedIds());
 
     const items = places
       .filter((p) => p.services.includes(service.id))
@@ -87,6 +100,7 @@ async function renderResultsRoute(serviceId) {
               distanceMeters(position, { lat: p.latitude, lng: p.longitude })
             )
           : null,
+        saved: savedIds.has(p.id),
       }));
 
     if (position) {
@@ -109,6 +123,27 @@ async function renderResultsRoute(serviceId) {
     );
   } catch {
     paint(renderResultsError(service));
+  }
+}
+
+/* Destino de los QR: guarda el lugar en este teléfono y lo muestra. */
+async function renderSaveRoute(placeId) {
+  try {
+    const places = await getPlaces();
+    const place = places.find((p) => p.id === placeId);
+    if (!place) {
+      location.hash = '#/';
+      return renderHomeRoute();
+    }
+    save(place.id);
+    paint(renderSavedConfirm({ place, now: new Date() }));
+  } catch {
+    paint(
+      `<div class="page">
+         <p class="error" role="alert">No se pudo guardar. Probá escanear de nuevo.</p>
+         <p><a class="back-link" href="#/">← IR AL INICIO</a></p>
+       </div>`
+    );
   }
 }
 
@@ -177,9 +212,21 @@ async function render() {
   window.scrollTo(0, 0);
 
   if (route.name === 'results') return renderResultsRoute(route.serviceId);
+  if (route.name === 'save') return renderSaveRoute(route.placeId);
   if (route.name === 'board') return enterBoardMode();
   return renderHomeRoute();
 }
 
+/* Botones GUARDAR / GUARDADO (toggle) — delegación de eventos. */
+app.addEventListener('click', (event) => {
+  const btn = event.target.closest('[data-save]');
+  if (!btn) return;
+  const id = btn.getAttribute('data-save');
+  if (isSaved(id)) remove(id);
+  else save(id);
+  render(); // re-render para reflejar el cambio al instante
+});
+
 window.addEventListener('hashchange', render);
 render();
+

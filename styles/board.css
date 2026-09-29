@@ -67,6 +67,10 @@
 }
 
 .board-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2vmin;
   padding: 1vmin 0;
   border-top: 0.15vmin solid var(--line);
 }
@@ -74,6 +78,10 @@
 .board-row:first-of-type {
   border-top: 0;
   padding-top: 0;
+}
+
+.board-row__info {
+  min-width: 0; /* permite que el texto se encoja sin desbordar */
 }
 
 .board-row__name {
@@ -93,6 +101,26 @@
 .board-row--open .board-row__name::before {
   content: "● ";
   color: var(--ok);
+}
+
+/* QR para llevarse el lugar al teléfono (escaneable a distancia) */
+.board-qr {
+  flex: none;
+  text-align: center;
+}
+
+.board-qr svg {
+  display: block;
+  width: max(4rem, 8vmin);
+  height: max(4rem, 8vmin);
+}
+
+.board-qr__label {
+  margin: 0.4vmin 0 0;
+  font-size: max(0.7rem, 1.4vmin);
+  font-weight: 700;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
 }
 
 .board-footer {
