@@ -12,11 +12,11 @@
 .board {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden; /* cartelería: nunca scrollea */
+  min-height: 100vh;
+  min-height: 100svh;
   padding: 2vmin 3vmin;
-}
+  /* Altura natural: si entra, llena la TV; si no entra, la página
+     scrollea (manual en pantallas chicas, automático en TVs). */
 
 .board-header {
   flex: none;
@@ -51,8 +51,7 @@
 /* ---------- Turno de comida (hero) ---------- */
 
 .board-hero {
-  flex: 3;
-  min-height: 0;
+  flex: none;
   display: flex;
   flex-direction: column;
   background: var(--card);
@@ -88,8 +87,6 @@
 }
 
 .board-hero__cards {
-  flex: 1;
-  min-height: 0;
   display: grid;
   gap: 2vmin;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
@@ -143,14 +140,11 @@
 /* ---------- Resto de los servicios ---------- */
 
 .board-strip {
-  flex: 2;
-  min-height: 0;
   margin-top: 2vmin;
   display: grid;
   gap: 2vmin;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  overflow: hidden;
 }
 
 @media (orientation: portrait) {

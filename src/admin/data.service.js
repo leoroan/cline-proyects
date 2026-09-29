@@ -179,3 +179,35 @@ export function importData(text) {
     users: Array.isArray(data.localUsers) ? data.localUsers.length : 0,
   };
 }
+
+/* ---------- Ajustes de la cartelería (por aparato) ---------- */
+
+const BOARD_SETTINGS_KEY = 'board-settings:v1';
+const BOARD_DEFAULTS = { autoScroll: true, autoScrollSeconds: 10, rotateSeconds: 6 };
+
+function clampNumber(v, min, max, fallback) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(min, Math.round(n)));
+}
+
+export function getBoardSettings() {
+  const s = read(BOARD_SETTINGS_KEY, {});
+  return {
+    autoScroll: s.autoScroll !== false,
+    autoScrollSeconds: clampNumber(
+      s.autoScrollSeconds, 3, 120, BOARD_DEFAULTS.autoScrollSeconds
+    ),
+    rotateSeconds: clampNumber(s.rotateSeconds, 2, 60, BOARD_DEFAULTS.rotateSeconds),
+  };
+}
+
+export function saveBoardSettings({ autoScroll, autoScrollSeconds, rotateSeconds }) {
+  const prev = getBoardSettings();
+  write(BOARD_SETTINGS_KEY, {
+    autoScroll: Boolean(autoScroll),
+    autoScrollSeconds: clampNumber(autoScrollSeconds, 3, 120, prev.autoScrollSeconds),
+    rotateSeconds: clampNumber(rotateSeconds, 2, 60, prev.rotateSeconds),
+  });
+  return getBoardSettings();
+}

@@ -27,6 +27,8 @@ import {
   removeCustomService,
   exportData,
   importData,
+  getBoardSettings,
+  saveBoardSettings,
 } from './data.service.js';
 import { parseMapsLink } from './maps.js';
 import { renderAdminLogin, renderAdminMenu } from './views/login.js';
@@ -35,6 +37,7 @@ import {
   renderAdminServices,
   renderAdminUsers,
   renderAdminData,
+  renderAdminBoardSettings,
 } from './views/misc.js';
 
 let flash = null; // mensaje de éxito para la próxima pantalla
@@ -80,6 +83,9 @@ export async function renderAdmin(sub = 'menu', param = null) {
       return;
     case 'equipo':
       paint(renderAdminUsers({ users: getUsers(), flash: f }));
+      return;
+    case 'pantalla':
+      paint(renderAdminBoardSettings({ settings: getBoardSettings(), flash: f }));
       return;
     case 'datos':
       paint(renderAdminData({ exportText: exportData(), flash: f }));
@@ -367,6 +373,18 @@ export async function handleAdminSubmit(event) {
       return true;
     }
     flash = `✔ ${r.user.name} ya puede entrar con su usuario.`;
+    rerender();
+    return true;
+  }
+
+  if (kind === 'board-settings') {
+    const fd = new FormData(form);
+    saveBoardSettings({
+      autoScroll: fd.get('autoScroll') !== null,
+      autoScrollSeconds: fd.get('autoScrollSeconds'),
+      rotateSeconds: fd.get('rotateSeconds'),
+    });
+    flash = '✔ Ajustes guardados. Se aplican en la cartelería de este aparato.';
     rerender();
     return true;
   }

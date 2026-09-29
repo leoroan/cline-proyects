@@ -197,3 +197,21 @@ if (failed) {
 }
 console.log('\nTests de gestión OK ✔\n');
 
+
+console.log('\nAjustes de cartelería:');
+
+t('valores por defecto', () => {
+  const s = data.getBoardSettings();
+  assert.equal(s.autoScroll, true);
+  assert.equal(s.autoScrollSeconds, 10);
+  assert.equal(s.rotateSeconds, 6);
+});
+
+t('guardar y leer (con límites sanos)', () => {
+  data.saveBoardSettings({ autoScroll: false, autoScrollSeconds: 999, rotateSeconds: 1 });
+  const s = data.getBoardSettings();
+  assert.equal(s.autoScroll, false);
+  assert.equal(s.autoScrollSeconds, 120); // clamp máximo
+  assert.equal(s.rotateSeconds, 2);       // clamp mínimo
+  data.saveBoardSettings({ autoScroll: true, autoScrollSeconds: 10, rotateSeconds: 6 });
+});

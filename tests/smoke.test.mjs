@@ -169,6 +169,7 @@ t('con sesión se ve el menú de gestión', () => {
   assert.match(appEl.innerHTML, /SECCIONES/);
   assert.match(appEl.innerHTML, /EQUIPO/);
   assert.match(appEl.innerHTML, /COMPARTIR DATOS/);
+  assert.match(appEl.innerHTML, /PANTALLA/);
 });
 
 location.hash = '#/admin/nuevo';
@@ -190,6 +191,16 @@ t('la lista muestra lugares con su estado', () => {
   assert.match(appEl.innerHTML, /ACTIVO/);
   assert.match(appEl.innerHTML, /EDITAR/);
   assert.match(appEl.innerHTML, /DESACTIVAR/);
+});
+
+location.hash = '#/admin/pantalla';
+await handlers.hashchange();
+await settle();
+
+t('pantalla permite configurar el movimiento de la cartelería', () => {
+  assert.match(appEl.innerHTML, /MOVIMIENTO AUTOMÁTICO/);
+  assert.match(appEl.innerHTML, /SEGUNDOS/);
+  assert.match(appEl.innerHTML, /rotan las tarjetas/);
 });
 
 location.hash = '#/admin/datos';

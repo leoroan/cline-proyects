@@ -172,3 +172,45 @@ export function renderAdminData({ exportText, flash = null, error = null } = {})
   </div>`;
 }
 
+
+/* ---------- PANTALLA (ajustes de la cartelería) ---------- */
+
+export function renderAdminBoardSettings({ settings, flash = null } = {}) {
+  return `
+  <div class="page admin">
+    <header class="page-header">
+      <a class="back-link" href="#/admin">← GESTIÓN</a>
+      <h2 class="page-title" id="contenido" tabindex="-1" data-focus>🖥️ Pantalla</h2>
+      <p class="admin-sub">
+        Cómo se mueve la cartelería (la vista de TV / monitor).
+        Los cambios valen <strong>para este aparato</strong>.
+      </p>
+      ${flash ? `<p class="form-ok" role="status">${esc(flash)}</p>` : ''}
+    </header>
+    <form class="admin-form" data-form="board-settings">
+      <label class="active-toggle">
+        <input type="checkbox" name="autoScroll" ${settings.autoScroll ? 'checked' : ''} />
+        <span><strong>MOVIMIENTO AUTOMÁTICO</strong> — si no entra todo,
+        la pantalla baja y sube sola</span>
+      </label>
+      <div class="field">
+        <label for="f-scroll-secs">¿CADA CUÁNTOS SEGUNDOS se mueve?</label>
+        <input id="f-scroll-secs" name="autoScrollSeconds" type="number"
+          min="3" max="120" step="1" inputmode="numeric"
+          value="${settings.autoScrollSeconds}" />
+        <p class="field-hint">Entre 3 y 120. Recomendado: 10.</p>
+      </div>
+      <div class="field">
+        <label for="f-rotate-secs">¿CADA CUÁNTOS SEGUNDOS rotan las tarjetas?</label>
+        <input id="f-rotate-secs" name="rotateSeconds" type="number"
+          min="2" max="60" step="1" inputmode="numeric"
+          value="${settings.rotateSeconds}" />
+        <p class="field-hint">Entre 2 y 60. Recomendado: 6.</p>
+      </div>
+      <button class="btn-directions admin-submit" type="submit">GUARDAR</button>
+    </form>
+    <p class="admin-sub" style="margin-top: 1.5rem;">
+      <a class="back-link" href="#/panel">Ver cómo queda la cartelería →</a>
+    </p>
+  </div>`;
+}

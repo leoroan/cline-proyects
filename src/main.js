@@ -30,6 +30,7 @@ import {
   hasCoords,
 } from './services/geo.service.js';
 import { getSavedIds, isSaved, save, remove } from './services/saved.service.js';
+import { getBoardSettings } from './admin/data.service.js';
 import { parseRoute } from './router.js';
 import { paint } from './utils/dom.js';
 import { renderHome } from './views/home.view.js';
@@ -166,7 +167,6 @@ async function renderSaveRoute(placeId) {
      y se muestra "a X m"; si no, orden por urgencia.
    ============================================================ */
 
-const BOARD_ROTATE_MS = 6_000;
 const BOARD_DATA_MS = 30_000;
 
 let boardTimer = null;
@@ -180,8 +180,8 @@ function boardLayout() {
     typeof matchMedia !== 'function' ||
     matchMedia('(orientation: landscape)').matches;
   return landscape
-    ? { heroPage: 3, stripPage: 4, rowsPerSection: 3 }
-    : { heroPage: 2, stripPage: 2, rowsPerSection: 3 };
+    ? { heroPage: 3, rowsPerSection: 3 }
+    : { heroPage: 2, rowsPerSection: 3 };
 }
 
 async function boardPlaces() {
@@ -264,10 +264,12 @@ async function enterBoardMode() {
     });
   }
   await renderBoardRoute();
+  const settings = getBoardSettings();
   boardTimer = setInterval(() => {
     boardTick += 1;
     renderBoardRoute({ focus: false });
-  }, BOARD_ROTATE_MS);
+  }, settings.rotateSeconds * 1000);
+  startAutoScroll(settings);
   // Que la pantalla no se apague (donde el navegador lo permita).
   try {
     wakeLock = (await navigator.wakeLock?.request('screen')) ?? null;
@@ -276,11 +278,41 @@ async function enterBoardMode() {
   }
 }
 
+/* Scroll automático arriba/abajo para TVs donde no entra todo.
+   Sólo en pantallas grandes (≥1200px): en chicas el scroll es manual. */
+let autoScrollTimer = null;
+let autoScrollDown = false;
+
+function startAutoScroll(settings) {
+  stopAutoScroll();
+  if (!settings.autoScroll) return;
+  if (typeof matchMedia !== 'function') return;
+  if (!matchMedia('(min-width: 1200px)').matches) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  autoScrollTimer = setInterval(() => {
+    const el = document.scrollingElement ?? document.documentElement;
+    const viewH = window.innerHeight;
+    if (!el || typeof viewH !== 'number') return;
+    if (el.scrollHeight <= viewH + 8) return; // entra todo: quieto
+    autoScrollDown = !autoScrollDown;
+    window.scrollTo({ top: autoScrollDown ? el.scrollHeight : 0, behavior: 'smooth' });
+  }, settings.autoScrollSeconds * 1000);
+}
+
+function stopAutoScroll() {
+  if (autoScrollTimer) {
+    clearInterval(autoScrollTimer);
+    autoScrollTimer = null;
+  }
+  autoScrollDown = false;
+}
+
 function leaveBoardMode() {
   if (boardTimer) {
     clearInterval(boardTimer);
     boardTimer = null;
   }
+  stopAutoScroll();
   boardCache = null;
   if (wakeLock) {
     try {

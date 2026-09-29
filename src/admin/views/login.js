@@ -60,6 +60,12 @@ const MENU_ITEMS = [
     desc: 'Dar de alta personas que colaboran cargando información.',
   },
   {
+    href: '#/admin/pantalla',
+    icon: '🖥️',
+    title: 'PANTALLA',
+    desc: 'Cómo se mueve la cartelería: rotación y scroll automático.',
+  },
+  {
     href: '#/admin/datos',
     icon: '📤',
     title: 'COMPARTIR DATOS',

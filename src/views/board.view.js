@@ -97,8 +97,7 @@ export function renderBoard({ hero, strips, layout, tick, now }) {
     </section>`;
   }
 
-  const stripPage = pageOf(strips, layout.stripPage, tick);
-
+  // Todas las secciones a la vista (si no entran, scrollea sola)
   return `
   <div class="board">
     <header class="board-header">
@@ -108,7 +107,7 @@ export function renderBoard({ hero, strips, layout, tick, now }) {
     </header>
     ${heroHtml}
     <div class="board-strip">
-      ${stripPage.items
+      ${strips
         .map(({ service, items }) => {
           const rows = pageOf(items, layout.rowsPerSection, tick);
           return `
