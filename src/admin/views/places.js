@@ -5,6 +5,7 @@
 import { esc } from '../../utils/html.js';
 import { getServices } from '../../services/catalog.service.js';
 import { MEAL_SHIFTS } from '../../config/shifts.js';
+import { serviceIcon } from '../../components/service-icon.js';
 
 /* Chips de días: empiezan el lunes (valor = día JS: 0 dom … 6 sáb) */
 const DAY_CHIPS = [
@@ -19,12 +20,13 @@ const DAY_CHIPS = [
 
 export function renderAdminPlaces({ places, flash = null }) {
   const services = getServices();
-  const iconOf = (sid) => services.find((s) => s.id === sid)?.icon ?? '•';
+  const iconOf = (sid) =>
+    serviceIcon(services.find((s) => s.id === sid) ?? { icon: '•' });
 
   return `
   <div class="page admin">
     <header class="page-header">
-      <a class="back-link" href="#/admin">← GESTIÓN</a>
+      <a class="back-link" href="#/admin"><i class="bi bi-arrow-left" aria-hidden="true"></i> GESTIÓN</a>
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>📋 Lugares</h2>
       <p class="admin-sub">
         <strong>ACTIVO</strong> = se ve en la app · <strong>EN PAUSA</strong> = no se ve
@@ -77,7 +79,7 @@ function serviceBlock(svc, place) {
     <div class="svc${on ? ' is-on' : ''}">
       <label class="svc__toggle">
         <input type="checkbox" name="svc-${esc(svc.id)}" ${on ? 'checked' : ''} />
-        <span class="svc__icon" aria-hidden="true">${svc.icon}</span>
+        <span class="svc__icon">${serviceIcon(svc)}</span>
         <span class="svc__label">${esc(svc.label)}</span>
       </label>
       <div class="svc__schedule">
@@ -114,7 +116,7 @@ export function renderPlaceForm({ place = null } = {}) {
   return `
   <div class="page admin">
     <header class="page-header">
-      <a class="back-link" href="#/admin/lugares">← LUGARES</a>
+      <a class="back-link" href="#/admin/lugares"><i class="bi bi-arrow-left" aria-hidden="true"></i> LUGARES</a>
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>
         ${editing ? '✏️ Editar lugar' : '➕ Agregar lugar'}
       </h2>

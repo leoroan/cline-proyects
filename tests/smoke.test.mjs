@@ -62,6 +62,7 @@ t('home muestra la pregunta y los servicios', () => {
   assert.match(appEl.innerHTML, /ALMUERZO/);
   assert.match(appEl.innerHTML, /DORMIR/);
   assert.match(appEl.innerHTML, /href="#\/s\/lunch"/);
+  assert.match(appEl.innerHTML, /bi bi-egg-fried/); // Bootstrap Icons
 });
 
 t('home SIN guardados no muestra MIS LUGARES', () => {
@@ -106,7 +107,8 @@ await handlers.hashchange();
 await settle();
 t('la home muestra primero MIS LUGARES y después los servicios', () => {
   const html = appEl.innerHTML;
-  assert.match(html, /⭐ MIS LUGARES/);
+  assert.match(html, /MIS LUGARES/);
+  assert.match(html, /bi bi-bookmark-star-fill/);
   assert.match(html, /Comedor San José/);
   assert.match(html, /¿QUÉ NECESITÁS\?/);
   assert.ok(

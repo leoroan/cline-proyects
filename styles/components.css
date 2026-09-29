@@ -535,3 +535,21 @@ body {
     font-size: 1.2rem;
   }
 }
+
+/* ---------- Carga con spinner Bootstrap ---------- */
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading__spinner {
+  width: 3rem;
+  height: 3rem;
+  color: var(--brand);
+}
+
+.loading__text {
+  margin: 0;
+}

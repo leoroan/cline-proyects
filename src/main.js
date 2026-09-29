@@ -169,9 +169,8 @@ async function renderSaveRoute(placeId) {
 
 const BOARD_DATA_MS = 30_000;
 
-let boardTimer = null;
-let boardTick = 0;
-let boardLastHtml = null; // anti-parpadeo: no repintar si nada cambió
+let boardTimer = null;      // re-lectura de datos
+let clockTimer = null;     // reloj al minuto (sin re-render)
 let boardCache = null;     // { places, at }
 let boardPosition;         // undefined = todavía no se pidió
 
@@ -196,7 +195,15 @@ async function renderBoardRoute({ focus = true } = {}) {
   try {
     const places = await boardPlaces();
     const now = argentinaTime();
-    const layout = boardLayout();
+    const settings = getBoardSettings();
+    // Con reduced-motion nada rota: se muestra todo y scrollea
+    const ride =
+      typeof matchMedia !== 'function' ||
+      !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const layout = {
+      ...boardLayout(),
+      rotateMs: ride ? settings.rotateSeconds * 1000 : 0,
+    };
     const byUrgencyThenDistance = (a, b) =>
       rankOf(a) - rankOf(b) || (a.distance ?? Infinity) - (b.distance ?? Infinity);
     const catalog = getServices();
@@ -242,12 +249,12 @@ async function renderBoardRoute({ focus = true } = {}) {
       })
       .filter(Boolean);
 
-    const html = renderBoard({ hero, strips, layout, tick: boardTick, now });
-    // Si nada cambió (todo entra y está quieto), no repintar:
-    // evita el parpadeo del fundido en TVs.
-    if (html !== boardLastHtml) {
-      boardLastHtml = html;
-      paint(html, { focus });
+    paint(renderBoard({ hero, strips, layout, now }), { focus });
+    // Inicializar los carruseles Bootstrap del markup inyectado
+    if (typeof bootstrap !== 'undefined') {
+      app.querySelectorAll?.('[data-bs-ride="carousel"]').forEach((el) =>
+        bootstrap.Carousel.getOrCreateInstance(el)
+      );
     }
   } catch {
     if (focus) {
@@ -261,9 +268,7 @@ async function renderBoardRoute({ focus = true } = {}) {
 }
 
 async function enterBoardMode() {
-  boardTick = 0;
   boardCache = null;
-  boardLastHtml = null;
   // Ubicación opcional para ordenar por cercanía (nunca bloquea)
   if (boardPosition === undefined) {
     boardPosition = null;
@@ -272,12 +277,11 @@ async function enterBoardMode() {
     });
   }
   await renderBoardRoute();
-  const settings = getBoardSettings();
-  boardTimer = setInterval(() => {
-    boardTick += 1;
-    renderBoardRoute({ focus: false });
-  }, settings.rotateSeconds * 1000);
-  startAutoScroll(settings);
+  // Datos frescos cada 30 s (re-renderiza y reinicia carruseles)
+  boardTimer = setInterval(() => renderBoardRoute({ focus: false }), BOARD_DATA_MS);
+  // Reloj al día sin re-renderizar (no reinicia los carruseles)
+  clockTimer = setInterval(updateBoardClock, 15_000);
+  startAutoScroll(getBoardSettings());
   // Que la pantalla no se apague (donde el navegador lo permita).
   try {
     wakeLock = (await navigator.wakeLock?.request('screen')) ?? null;
@@ -315,14 +319,27 @@ function stopAutoScroll() {
   autoScrollDown = false;
 }
 
+function updateBoardClock() {
+  const el = app.querySelector?.('.board-clock');
+  if (el) {
+    el.textContent = argentinaTime().toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+}
+
 function leaveBoardMode() {
   if (boardTimer) {
     clearInterval(boardTimer);
     boardTimer = null;
   }
+  if (clockTimer) {
+    clearInterval(clockTimer);
+    clockTimer = null;
+  }
   stopAutoScroll();
   boardCache = null;
-  boardLastHtml = null;
   if (wakeLock) {
     try {
       wakeLock.release();

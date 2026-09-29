@@ -1,6 +1,6 @@
 {
   "name": "ayuda-cerca",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Punto de información comunitario digital: comida, ropa y dónde dormir. SPA mobile-first, accesible y con modo pantalla para TV.",
   "type": "module",

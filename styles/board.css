@@ -293,3 +293,39 @@
   flex-direction: column;
   justify-content: center;
 }
+
+/* ============================================================
+   CARRUSEL DE BOOTSTRAP dentro de la cartelería
+   (estructura y JS de Bootstrap 5.3, estética nuestra)
+   ============================================================ */
+
+/* Indicadores: posición natural bajo el carrusel, puntos grandes */
+.board-dots {
+  position: static;
+  margin: 0.8vmin 0 0;
+  gap: 0.8vmin;
+  justify-content: center;
+}
+
+.board-dots button {
+  width: 1vmin;
+  min-width: 0.5rem;
+  height: 1vmin;
+  min-height: 0.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--line);
+  text-indent: 0;
+}
+
+.board-dots button.active {
+  background: var(--ink);
+}
+
+/* Transición de Bootstrap respetando reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-item {
+    transition: none !important;
+  }
+}

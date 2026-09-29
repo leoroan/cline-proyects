@@ -33,3 +33,26 @@
   --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
     "Helvetica Neue", Arial, sans-serif;
 }
+
+/* ============================================================
+   TEMA DE BOOTSTRAP 5.3 (vendored local, sin CDN)
+   ------------------------------------------------------------
+   Bootstrap se usa como BASE (reboot, carousel, spinner,
+   iconos, visually-hidden), pero con NUESTRA identidad:
+   sus variables apuntan a nuestra paleta. Así cualquier
+   componente Bootstrap que se use ya nace tematizado.
+   ============================================================ */
+
+:root {
+  --bs-primary: #8a3300;
+  --bs-primary-rgb: 138, 51, 0;
+  --bs-link-color: var(--brand);
+  --bs-link-color-rgb: 138, 51, 0;
+  --bs-link-hover-color: var(--brand-strong);
+  --bs-body-font-family: var(--font);
+  --bs-body-color: var(--ink);
+  --bs-body-bg: var(--paper);
+  --bs-border-color: var(--line);
+  --bs-border-radius: 1rem;
+  --bs-border-radius-lg: var(--radius);
+}

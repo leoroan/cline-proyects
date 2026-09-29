@@ -13,14 +13,14 @@ export function renderSavedConfirm({ place, now }) {
   return `
   <div class="page">
     <p class="confirm-badge" role="status" id="contenido" tabindex="-1" data-focus>
-      ✔ GUARDADO EN ESTE TELÉFONO
+      <i class="bi bi-check-circle-fill" aria-hidden="true"></i> GUARDADO EN ESTE TELÉFONO
     </p>
     <p class="confirm-sub">
       Queda acá aunque cierres todo. Se borra solo a los ${SAVED_TTL_DAYS} días.
     </p>
     ${savedCard({ place, now })}
     <p class="confirm-back">
-      <a class="back-link" href="#/">← IR AL INICIO</a>
+      <a class="back-link" href="#/"><i class="bi bi-arrow-left" aria-hidden="true"></i> IR AL INICIO</a>
     </p>
   </div>`;
 }

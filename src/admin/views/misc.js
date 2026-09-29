@@ -3,6 +3,7 @@
    ============================================================ */
 
 import { esc } from '../../utils/html.js';
+import { serviceIcon } from '../../components/service-icon.js';
 import { getServices } from '../../services/catalog.service.js';
 
 const EMOJI_SUGGESTIONS = ['🚿', '🧴', '💊', '🩹', '🍼', '📚', '🔌', '🚰', '🧦', '🩺', '🧼', '🍫'];
@@ -14,7 +15,7 @@ export function renderAdminServices({ flash = null, error = null } = {}) {
   return `
   <div class="page admin">
     <header class="page-header">
-      <a class="back-link" href="#/admin">← GESTIÓN</a>
+      <a class="back-link" href="#/admin"><i class="bi bi-arrow-left" aria-hidden="true"></i> GESTIÓN</a>
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>🧩 Secciones</h2>
       <p class="admin-sub">
         Las secciones son las categorías que ve la gente (DESAYUNO, ROPA…).
@@ -30,7 +31,7 @@ export function renderAdminServices({ flash = null, error = null } = {}) {
           (s) => `
         <article class="admin-place">
           <div class="admin-place__info">
-            <h3>${s.icon} ${esc(s.label)}</h3>
+            <h3>${serviceIcon(s)} ${esc(s.label)}</h3>
           </div>
           <div class="admin-place__actions">
             ${
@@ -73,7 +74,7 @@ export function renderAdminUsers({ users, flash = null, error = null } = {}) {
   return `
   <div class="page admin">
     <header class="page-header">
-      <a class="back-link" href="#/admin">← GESTIÓN</a>
+      <a class="back-link" href="#/admin"><i class="bi bi-arrow-left" aria-hidden="true"></i> GESTIÓN</a>
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>👥 Equipo</h2>
       <p class="admin-sub">
         Personas que pueden entrar a esta zona. Cada una con su usuario y su clave.
@@ -132,7 +133,7 @@ export function renderAdminData({ exportText, flash = null, error = null } = {})
   return `
   <div class="page admin">
     <header class="page-header">
-      <a class="back-link" href="#/admin">← GESTIÓN</a>
+      <a class="back-link" href="#/admin"><i class="bi bi-arrow-left" aria-hidden="true"></i> GESTIÓN</a>
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>📤 Compartir datos</h2>
       <p class="admin-sub">
         Lo cargado queda guardado <strong>en este aparato</strong>. Para que otro
@@ -179,7 +180,7 @@ export function renderAdminBoardSettings({ settings, flash = null } = {}) {
   return `
   <div class="page admin">
     <header class="page-header">
-      <a class="back-link" href="#/admin">← GESTIÓN</a>
+      <a class="back-link" href="#/admin"><i class="bi bi-arrow-left" aria-hidden="true"></i> GESTIÓN</a>
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>🖥️ Pantalla</h2>
       <p class="admin-sub">
         Cómo se mueve la cartelería (la vista de TV / monitor).

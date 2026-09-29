@@ -1,5 +1,7 @@
 # Ayuda Cerca
 
+> **Versión 0.2.0** — ahora con base Bootstrap 5.3 (vendored, sin CDN).
+
 **Punto de información comunitario digital**: comunica rápidamente servicios esenciales (comida, ropa, dónde dormir) a personas en situación de calle o con acceso limitado a la información.
 
 No es una app tradicional. Es un **cartel digital inteligente**: entrar, mirar y saber de inmediato qué hay disponible.
@@ -40,6 +42,21 @@ El modo pantalla es **cartelería**. Arriba muestra el turno de comida (AHORA / 
 - **TV/monitor grande (≥ 1200px) donde no entra todo**: scroll **automático** que baja y sube solo, cada X segundos (configurable en ⚙️ Gestión → 🖥️ PANTALLA, junto con la velocidad de rotación).
 
 Relee los datos cada 30 s, pide WakeLock para que la TV no se apague y funciona en vertical u horizontal.
+
+
+## 🅱️ Bootstrap 5.3 — integración pragmática (vendored, offline)
+
+Bootstrap está integrado **sin romper los principios** del proyecto (ir al hueso, identidad propia, cero dependencias de red):
+
+- **Local, no CDN**: `vendor/bootstrap/` (css + bundle js) y `vendor/bootstrap-icons/` (css + fonts). La TV del comedor no necesita internet.
+- **Tematizado con nuestra paleta**: las variables `--bs-*` (primary, link, body, radius) apuntan a nuestros tokens terracota/papel. No parece "plantilla Bootstrap": parece Ayuda Cerca.
+- **Qué se usa de Bootstrap**:
+  - **Carousel** (`data-bs-ride`, `data-bs-interval` configurable desde ⚙️ → 🖥️ PANTALLA): rota el turno y las filas de cada tarjeta de la cartelería. Con `prefers-reduced-motion` nada rota: se muestra todo.
+  - **Spinner** (`spinner-border`) en "Buscando lugares…".
+  - **Bootstrap Icons** en toda la UI (servicios, CÓMO LLEGAR, GUARDAR, volver, gestión). El catálogo acepta `bi` por servicio; las secciones creadas a mano siguen con emoji.
+  - **Reboot + variables CSS + `visually-hidden`**: base consistente que hereda nuestro `font-size` fluido (todo escala con el viewport igual que antes).
+- **Qué NO se usa y por qué**: modales, toasts, navbars, dropdowns, offcanvas, tooltips, accordions… no ayudan a una persona a conseguir comida, ropa o dónde dormir. Sigue siendo IR AL HUESO: Bootstrap es el piso, no la casa.
+
 
 ## Arquitectura
 

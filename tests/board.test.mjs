@@ -1,4 +1,5 @@
-/* Tests de la cartelería (render puro): rotación y quietud.
+/* Tests de la cartelería (render puro): carruseles Bootstrap,
+   quietud cuando todo entra, y reduced-motion.
    Uso: node tests/board.test.mjs */
 
 import assert from 'node:assert/strict';
@@ -10,8 +11,9 @@ Object.defineProperty(globalThis, 'location', {
 
 const { renderBoard } = await import('../src/views/board.view.js');
 
-const LAYOUT = { heroPage: 3, rowsPerSection: 3 };
-const SERVICE = { id: 'dinner', label: 'CENA', icon: '🍽️' };
+const LAYOUT = { heroPage: 3, rowsPerSection: 3, rotateMs: 6000 };
+const NO_ROTATE = { heroPage: 3, rowsPerSection: 3, rotateMs: 0 };
+const SERVICE = { id: 'dinner', label: 'CENA', icon: '🍽️', bi: 'bi-moon-stars' };
 const NOW = new Date(2024, 5, 3, 19, 30);
 
 const mk = (id) => ({
@@ -50,63 +52,68 @@ function t(name, fn) {
   }
 }
 
-console.log('\nCartelería — rotación y quietud:');
+console.log('\nCartelería — carruseles Bootstrap:');
 
-t('todo entra → quieto: sin puntos y HTML idéntico entre ticks', () => {
-  const a = renderBoard({
+t('todo entra → quieto: sin carrusel ni indicadores', () => {
+  const html = renderBoard({
     hero: heroOf(['a', 'b']),
     strips: stripOf(['x', 'y']),
     layout: LAYOUT,
-    tick: 0,
     now: NOW,
   });
-  const b = renderBoard({
-    hero: heroOf(['a', 'b']),
-    strips: stripOf(['x', 'y']),
+  assert.ok(!html.includes('data-bs-ride="carousel"'));
+  assert.ok(!html.includes('carousel-indicators'));
+});
+
+t('4 lugares en el turno → carrusel Bootstrap con todas las páginas', () => {
+  const html = renderBoard({
+    hero: heroOf(['a', 'b', 'c', 'd']),
+    strips: [],
     layout: LAYOUT,
-    tick: 5, // tick distinto: no debería cambiar nada
     now: NOW,
   });
-  assert.equal(a, b);
-  assert.ok(!a.includes('class="dots"'));
+  assert.ok(html.includes('data-bs-ride="carousel"'));
+  assert.ok(html.includes('id="hero-carousel"'));
+  assert.ok(html.includes('data-bs-interval="6000"'));
+  assert.ok(html.includes('carousel-item active'));
+  // las 4 páginas existen en el DOM (Bootstrap las desliza)
+  for (const id of ['a', 'b', 'c', 'd']) assert.ok(html.includes(`Lugar ${id}`));
+  // indicadores con slide-to
+  assert.ok(html.includes('data-bs-slide-to="0"'));
+  assert.ok(html.includes('data-bs-slide-to="1"'));
 });
 
-t('4 lugares en el turno → el carrusel principal rota', () => {
-  const hero = heroOf(['a', 'b', 'c', 'd']);
-  const p0 = renderBoard({ hero, strips: [], layout: LAYOUT, tick: 0, now: NOW });
-  const p1 = renderBoard({ hero, strips: [], layout: LAYOUT, tick: 1, now: NOW });
-  assert.match(p0, /Lugar a/);
-  assert.doesNotMatch(p0, /Lugar d/); // la 4ª no entra en la página 1
-  assert.match(p1, /Lugar d/); // aparece en la página 2
-  assert.doesNotMatch(p1, /Lugar a/);
-  assert.ok(p0.includes('class="dots"')); // hay indicador de páginas
-});
-
-t('el carrusel vuelve a la primera página (ciclo)', () => {
-  const hero = heroOf(['a', 'b', 'c', 'd']);
-  const p0 = renderBoard({ hero, strips: [], layout: LAYOUT, tick: 0, now: NOW });
-  const p2 = renderBoard({ hero, strips: [], layout: LAYOUT, tick: 2, now: NOW });
-  assert.equal(p0, p2);
-});
-
-t('las filas de una tarjeta de sección también rotan', () => {
-  const strips = stripOf(['a', 'b', 'c', 'd']);
-  const p0 = renderBoard({ hero: null, strips, layout: LAYOUT, tick: 0, now: NOW });
-  const p1 = renderBoard({ hero: null, strips, layout: LAYOUT, tick: 1, now: NOW });
-  assert.doesNotMatch(p0, /Lugar d/);
-  assert.match(p1, /Lugar d/);
-});
-
-t('sin hero (sin turnos) igual muestra las secciones', () => {
+t('las filas de una sección rotan con su propio carrusel', () => {
   const html = renderBoard({
     hero: null,
-    strips: stripOf(['a']),
+    strips: stripOf(['a', 'b', 'c', 'd']),
     layout: LAYOUT,
-    tick: 0,
     now: NOW,
   });
-  assert.match(html, /Lugar a/);
-  assert.match(html, /CENA/);
+  assert.ok(html.includes('id="strip-carousel-dinner"'));
+  assert.ok(html.includes('data-bs-ride="carousel"'));
+});
+
+t('rotateMs 0 (reduced-motion) → nada rota: todo visible, sin carrusel', () => {
+  const html = renderBoard({
+    hero: heroOf(['a', 'b', 'c', 'd']),
+    strips: stripOf(['w', 'x', 'y', 'z']),
+    layout: NO_ROTATE,
+    now: NOW,
+  });
+  assert.ok(!html.includes('data-bs-ride="carousel"'));
+  for (const id of ['a', 'b', 'c', 'd', 'w', 'x', 'y', 'z'])
+    assert.ok(html.includes(`Lugar ${id}`));
+});
+
+t('iconos de servicio usan Bootstrap Icons', () => {
+  const html = renderBoard({
+    hero: heroOf(['a']),
+    strips: stripOf(['x']),
+    layout: LAYOUT,
+    now: NOW,
+  });
+  assert.ok(html.includes('bi bi-moon-stars'));
 });
 
 if (failed) {

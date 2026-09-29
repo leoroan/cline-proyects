@@ -7,15 +7,16 @@
    ============================================================ */
 
 import { esc } from '../utils/html.js';
+import { serviceIcon } from '../components/service-icon.js';
 import { placeCard } from '../components/place-card.js';
 
 function shell(service, inner) {
   return `
   <div class="page">
     <header class="page-header">
-      <a class="back-link" href="#/">← VOLVER</a>
+      <a class="back-link" href="#/"><i class="bi bi-arrow-left" aria-hidden="true"></i> VOLVER</a>
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>
-        <span aria-hidden="true">${service.icon}</span> ${esc(service.label)}
+        ${serviceIcon(service)} ${esc(service.label)}
       </h2>
     </header>
     ${inner}
@@ -23,7 +24,10 @@ function shell(service, inner) {
 }
 
 export function renderResultsLoading(service) {
-  return shell(service, `<p class="loading" role="status">Buscando lugares…</p>`);
+  return shell(service, `<div class="loading" role="status">
+       <div class="spinner-border loading__spinner" aria-hidden="true"></div>
+       <p class="loading__text">Buscando lugares…</p>
+     </div>`);
 }
 
 export function renderResultsError(service) {

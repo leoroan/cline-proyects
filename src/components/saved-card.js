@@ -35,7 +35,7 @@ export function savedCard({ place, now = new Date() }) {
   <article class="place place--saved">
     <h3 class="place__name">${esc(place.name)}</h3>
     ${place.services.map((sid) => serviceLine(place, sid, now)).join('')}
-    <p class="place__row"><span aria-hidden="true">📍</span> ${esc(place.address)}</p>
+    <p class="place__row"><i class="bi bi-geo-alt" aria-hidden="true"></i> ${esc(place.address)}</p>
     ${
       place.availability
         ? `<p class="place__availability">${esc(place.availability)}</p>`
@@ -43,7 +43,7 @@ export function savedCard({ place, now = new Date() }) {
     }
     ${
       place.phone
-        ? `<p class="place__row"><span aria-hidden="true">📞</span> <a href="tel:${esc(
+        ? `<p class="place__row"><i class="bi bi-telephone" aria-hidden="true"></i> <a href="tel:${esc(
             String(place.phone).replace(/[^0-9+]/g, '')
           )}">${esc(place.phone)}</a></p>`
         : ''
@@ -51,10 +51,10 @@ export function savedCard({ place, now = new Date() }) {
     <div class="place__footer">
       <div class="place__actions">
         <a class="btn-directions" href="${directionsUrl(place)}" target="_blank" rel="noopener">
-          <span aria-hidden="true">📍</span> CÓMO LLEGAR
+          <i class="bi bi-geo-alt-fill" aria-hidden="true"></i> CÓMO LLEGAR
         </a>
         <button type="button" class="btn-save is-saved" data-save="${esc(place.id)}" aria-pressed="true">
-          ✔ GUARDADO
+          <i class="bi bi-bookmark-check-fill" aria-hidden="true"></i> GUARDADO
         </button>
       </div>
     </div>

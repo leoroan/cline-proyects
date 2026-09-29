@@ -15,17 +15,19 @@
    - id:    clave estable que viaja en los datos (inglés, minúscula)
    - label: la palabra que ve la persona (lenguaje cotidiano,
             en mayúsculas porque la UI la muestra así)
-   - icon:  emoji grande (sin dependencias). Si mañana se quieren
-            SVG propios, sólo cambia cómo se renderiza este campo.
+   - icon:  emoji grande (fallback universal).
+   - bi:    clase de Bootstrap Icons (vendored). Si está, se usa
+            en lugar del emoji. Las secciones creadas desde gestión
+            tienen sólo emoji y se ven igual de bien.
    ============================================================ */
 
 export const SERVICES = [
-  { id: 'breakfast', label: 'DESAYUNO', icon: '🍞' },
-  { id: 'lunch',     label: 'ALMUERZO', icon: '🍲' },
-  { id: 'snack',     label: 'MERIENDA', icon: '☕' },
-  { id: 'dinner',    label: 'CENA',     icon: '🍽️' },
-  { id: 'clothing',  label: 'ROPA',     icon: '👕' },
-  { id: 'shelter',   label: 'DORMIR',   icon: '🛏️' },
+  { id: 'breakfast', label: 'DESAYUNO', icon: '🍞', bi: 'bi-cup-hot' },
+  { id: 'lunch',     label: 'ALMUERZO', icon: '🍲', bi: 'bi-egg-fried' },
+  { id: 'snack',     label: 'MERIENDA', icon: '☕', bi: 'bi-cup-straw' },
+  { id: 'dinner',    label: 'CENA',     icon: '🍽️', bi: 'bi-moon-stars' },
+  { id: 'clothing',  label: 'ROPA',     icon: '👕', bi: 'bi-bag' },
+  { id: 'shelter',   label: 'DORMIR',   icon: '🛏️', bi: 'bi-house-heart' },
 ];
 
 export function serviceById(id) {
