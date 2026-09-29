@@ -278,3 +278,24 @@
     opacity: 1;
   }
 }
+
+/* ============================================================
+   PULIDO — alineación dentro de las tarjetas de cartelería
+   ============================================================ */
+
+/* Los puntos del carrusel quedan siempre al pie de cada tarjeta */
+.strip-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.strip-card .dots {
+  margin-top: auto;
+}
+
+/* La info del hero se centra verticalmente junto al QR */
+.hero-card__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

@@ -59,18 +59,20 @@ export function placeCard({ place, status, distance = null, saved = false }) {
         : ''
     }
     ${place.notes ? `<p class="place__notes">${esc(place.notes)}</p>` : ''}
-    <div class="place__actions">
-      <a class="btn-directions" href="${directionsUrl(place)}" target="_blank" rel="noopener">
-        <span aria-hidden="true">📍</span> CÓMO LLEGAR
-      </a>
-      <button type="button" class="btn-save${saved ? ' is-saved' : ''}"
-        data-save="${esc(place.id)}" aria-pressed="${saved}">
-        ${saved ? '✔ GUARDADO' : '＋ GUARDAR'}
-      </button>
-    </div>
-    <div class="qr-block">
-      ${qrSvg(saveLink(place.id))}
-      <p class="qr-block__label">ESCANEÁ Y LLEVATELO</p>
+    <div class="place__footer">
+      <div class="place__actions">
+        <a class="btn-directions" href="${directionsUrl(place)}" target="_blank" rel="noopener">
+          <span aria-hidden="true">📍</span> CÓMO LLEGAR
+        </a>
+        <button type="button" class="btn-save${saved ? ' is-saved' : ''}"
+          data-save="${esc(place.id)}" aria-pressed="${saved}">
+          ${saved ? '✔ GUARDADO' : '＋ GUARDAR'}
+        </button>
+      </div>
+      <div class="qr-block">
+        ${qrSvg(saveLink(place.id))}
+        <p class="qr-block__label">ESCANEÁ Y LLEVATELO</p>
+      </div>
     </div>
   </article>`;
 }

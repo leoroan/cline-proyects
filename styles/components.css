@@ -444,3 +444,94 @@
 .confirm-back {
   margin: 1.5rem 0 0;
 }
+
+/* ============================================================
+   PULIDO VISUAL — alineación, espacio aprovechado y marco QR
+   ============================================================ */
+
+/* Nada se sale del viewport */
+html,
+body {
+  overflow-x: clip;
+}
+
+.place,
+.service-btn,
+.hero-card,
+.strip-card,
+.admin-place {
+  min-width: 0;
+}
+
+/* Home: los botones usan todo su espacio */
+.service-btn {
+  justify-content: center;
+  text-align: center;
+}
+
+.service-btn__icon {
+  font-size: clamp(2.7rem, 2rem + 3vmin, 4.5rem);
+}
+
+.service-btn__label {
+  font-size: clamp(1.4rem, 1.15rem + 1.4vmin, 2.1rem);
+}
+
+/* Pantallas grandes: ícono arriba, palabra abajo (poster) */
+@media (min-width: 58rem) {
+  .service-btn {
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .service-btn__icon {
+    font-size: clamp(3.2rem, 7vmin, 6rem);
+  }
+
+  .service-btn__label {
+    font-size: clamp(1.6rem, 2.8vmin, 2.4rem);
+  }
+}
+
+/* Tarjetas: el pie (botones + QR) siempre alineado abajo,
+   igual en todas las tarjetas de una fila */
+.place__footer {
+  margin-top: auto;
+  padding-top: 0.6rem;
+}
+
+.place__footer .place__actions {
+  margin-top: 0;
+}
+
+/* Marco del QR: aire y borde propio en cualquier fondo */
+.qr-frame {
+  display: inline-block;
+  background: #fff;
+  padding: 0.3rem;
+  border: 0.12rem solid var(--line);
+  border-radius: 0.7rem;
+  line-height: 0;
+}
+
+.qr-frame svg {
+  display: block;
+}
+
+/* Celular en horizontal: sigue compacto (gana a lo anterior) */
+@media (max-height: 28rem) and (orientation: landscape) {
+  .service-btn {
+    flex-direction: row;
+    gap: 0.8rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .service-btn__icon {
+    font-size: 2rem;
+  }
+
+  .service-btn__label {
+    font-size: 1.2rem;
+  }
+}

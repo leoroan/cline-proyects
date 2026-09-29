@@ -5,11 +5,15 @@
    El logo central es posible porque el QR se genera con
    corrección de errores ALTA (~30%): el ícono tapa una zona
    mínima y el código sigue escaneándose perfecto.
+
+   El SVG viaja dentro de un marco (.qr-frame): fondo blanco,
+   aire y borde propio, para que se vea prolijo en cualquier
+   superficie (tarjeta, cartel, TV).
    ============================================================ */
 
 import qrcodegen from '../vendor/qrcodegen.js';
 
-export function qrSvg(text, { logo = '🍲', border = 2 } = {}) {
+export function qrSvg(text, { logo = '🍲', border = 3 } = {}) {
   const qr = qrcodegen.QrCode.encodeText(text, qrcodegen.QrCode.Ecc.HIGH);
   const size = qr.size;
   const total = size + border * 2;
@@ -28,9 +32,9 @@ export function qrSvg(text, { logo = '🍲', border = 2 } = {}) {
   const rx = Math.round(r * 0.35);
   const fontSize = Math.round(r * 1.15);
 
-  return `<svg viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="${total}" height="${total}" fill="#ffffff"/><path d="${d}" fill="#1c1712"/><rect x="${c - r}" y="${c - r}" width="${
+  return `<span class="qr-frame"><svg viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="${total}" height="${total}" fill="#ffffff"/><path d="${d}" fill="#1c1712"/><rect x="${
+    c - r
+  }" y="${c - r}" width="${r * 2}" height="${
     r * 2
-  }" height="${
-    r * 2
-  }" rx="${rx}" fill="#ffffff"/><text x="${c}" y="${c}" font-size="${fontSize}" text-anchor="middle" dominant-baseline="central">${logo}</text></svg>`;
+  }" rx="${rx}" fill="#ffffff"/><text x="${c}" y="${c}" font-size="${fontSize}" text-anchor="middle" dominant-baseline="central">${logo}</text></svg></span>`;
 }

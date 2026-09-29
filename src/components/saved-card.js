@@ -48,13 +48,15 @@ export function savedCard({ place, now = new Date() }) {
           )}">${esc(place.phone)}</a></p>`
         : ''
     }
-    <div class="place__actions">
-      <a class="btn-directions" href="${directionsUrl(place)}" target="_blank" rel="noopener">
-        <span aria-hidden="true">📍</span> CÓMO LLEGAR
-      </a>
-      <button type="button" class="btn-save is-saved" data-save="${esc(place.id)}" aria-pressed="true">
-        ✔ GUARDADO
-      </button>
+    <div class="place__footer">
+      <div class="place__actions">
+        <a class="btn-directions" href="${directionsUrl(place)}" target="_blank" rel="noopener">
+          <span aria-hidden="true">📍</span> CÓMO LLEGAR
+        </a>
+        <button type="button" class="btn-save is-saved" data-save="${esc(place.id)}" aria-pressed="true">
+          ✔ GUARDADO
+        </button>
+      </div>
     </div>
   </article>`;
 }
