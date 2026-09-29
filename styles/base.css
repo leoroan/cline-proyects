@@ -1,7 +1,13 @@
 /* ============================================================
-   BASE
-   Mobile-first. El tamaño raíz escala con el viewport (vmin),
-   así la misma UI crece sola en tablets, monitores y TVs.
+   BASE — responsive continuo
+   ------------------------------------------------------------
+   Estrategia: en lugar de "diseño móvil + breakpoints", TODO
+   escala de forma continua con el viewport:
+   - la tipografía raíz crece con vmin (celular → TV 4K)
+   - las grillas usan auto-fit/minmax (columnas según ancho real)
+   - el espaciado es fluido (--gap con clamp)
+   Resultado: se ajusta en CUALQUIER resolución, no sólo en
+   los breakpoints elegidos.
    ============================================================ */
 
 *,
@@ -11,7 +17,9 @@
 }
 
 html {
-  /* Celular chico ≈ 17px · celular ≈ 18px · TV 1080p ≈ 24px · 4K ≈ 28px */
+  /* Celular ≈ 17–18px · tablet ≈ 19–21px · monitor ≈ 22–24px · TV 4K ≈ 28px.
+     Se usa vmin (no vw): un celular en horizontal no queda con
+     letra gigante, y una TV en vertical sigue escalando bien. */
   font-size: clamp(1.0625rem, 0.85rem + 1vmin, 1.75rem);
   -webkit-text-size-adjust: 100%;
 }
@@ -19,7 +27,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  min-height: 100dvh;
+  /* svh: el contenido nunca queda detrás de la barra del navegador móvil */
+  min-height: 100svh;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font);
@@ -30,6 +39,11 @@ h1,
 h2,
 h3 {
   line-height: 1.15;
+  overflow-wrap: break-word; /* nombres largos nunca desbordan */
+}
+
+p {
+  overflow-wrap: break-word;
 }
 
 a {

@@ -26,6 +26,9 @@
   /* Forma */
   --radius: 1.25rem;
 
+  /* Espaciado fluido: crece suavemente con el viewport */
+  --gap: clamp(0.75rem, 0.55rem + 0.9vmin, 1.4rem);
+
   /* Tipografía: system stack legible, sin descargas externas */
   --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell,
     "Helvetica Neue", Arial, sans-serif;

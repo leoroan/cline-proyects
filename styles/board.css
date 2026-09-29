@@ -1,14 +1,16 @@
 /* ============================================================
    MODO PANTALLA (TV / monitor informativo)
-   Tipografía en vmin para leer a distancia. Sin navegación
-   compleja: la pantalla se actualiza sola.
+   Tipografía en vmin para leer a distancia. Grilla fluida:
+   las secciones se reparten solas según el ancho real
+   (2 columnas en 1080p, más en 4K/ultrawide).
+   Sin navegación compleja: la pantalla se actualiza sola.
    ============================================================ */
 
 .board {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
   padding: 2vmin 3vmin 4vmin;
 }
 
@@ -48,20 +50,8 @@
   flex: 1;
   display: grid;
   gap: 2.2vmin;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
   align-content: start;
-}
-
-@media (min-width: 52rem) {
-  .board-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (min-width: 85rem) {
-  .board-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .board-section {

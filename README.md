@@ -120,14 +120,24 @@ El color nunca es el único indicador: siempre acompaña texto.
 - Sin ubicación: primero los abiertos ahora.
 - **CÓMO LLEGAR** abre la app de mapas del teléfono con ruta **a pie** (URL universal de Google Maps). No hay mapa propio.
 
-## Accesibilidad
+## Responsive: continuo, no breakpoints fijos
+
+La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin saltos discretos:
+
+- **Tipografía raíz fluida**: `clamp(1.0625rem, 0.85rem + 1vmin, 1.75rem)` — crece de forma continua de un celular chico a una TV 4K.
+- **Grillas `auto-fit` + `minmax`**: las columnas aparecen solas según el ancho real disponible (1 en celular, 2 en tablet, 3+ en PC/TV), en cualquier píxel intermedio.
+- **Home que llena la pantalla**: las filas se estiran (`minmax(mínimo, 1fr)`); si no entran, hay scroll natural.
+- **Espaciado fluido** con `--gap: clamp(...)` y respeto al notch (`env(safe-area-inset-*)`).
+- **Celular en horizontal**: media query por altura que compacta header y botones.
+- **`svh`**: el alto nunca queda escondido detrás de la barra del navegador móvil.
+- **Modo pantalla**: secciones con la misma grilla fluida + tipografía en `vmin`.## Accesibilidad
 
 - Navegación con `<a>` nativos (funciona aunque falle JS), skip link, foco visible grueso.
 - Al cambiar de pantalla el foco va al título → los lectores de pantalla la anuncian.
 - Iconos emoji con `aria-hidden` + etiqueta de texto siempre presente.
 - Áreas táctiles grandes (botones de servicio ≥ 5.75rem, CÓMO LLEGAR ≥ 3.9rem).
 - Contraste AA (texto y estados ≥ 4.5:1), `prefers-reduced-motion` respetado.
-- Tipografía raíz que escala con `vmin`: crece sola en tablets, monitores y TVs.
+- Tipografía y grillas fluidas que se adaptan solas a cualquier viewport (ver "Responsive").
 
 ## Qué NO tiene (a propósito)
 
