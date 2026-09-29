@@ -6,6 +6,6 @@
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.mjs",
-    "test": "node tests/time.test.mjs && node tests/saved.test.mjs && node tests/admin.test.mjs && node tests/smoke.test.mjs"
+    "test": "node tests/time.test.mjs && node tests/saved.test.mjs && node tests/admin.test.mjs && node tests/board.test.mjs && node tests/smoke.test.mjs"
   }
 }

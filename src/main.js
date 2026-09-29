@@ -171,6 +171,7 @@ const BOARD_DATA_MS = 30_000;
 
 let boardTimer = null;
 let boardTick = 0;
+let boardLastHtml = null; // anti-parpadeo: no repintar si nada cambió
 let boardCache = null;     // { places, at }
 let boardPosition;         // undefined = todavía no se pidió
 
@@ -241,7 +242,13 @@ async function renderBoardRoute({ focus = true } = {}) {
       })
       .filter(Boolean);
 
-    paint(renderBoard({ hero, strips, layout, tick: boardTick, now }), { focus });
+    const html = renderBoard({ hero, strips, layout, tick: boardTick, now });
+    // Si nada cambió (todo entra y está quieto), no repintar:
+    // evita el parpadeo del fundido en TVs.
+    if (html !== boardLastHtml) {
+      boardLastHtml = html;
+      paint(html, { focus });
+    }
   } catch {
     if (focus) {
       paint(
@@ -256,6 +263,7 @@ async function renderBoardRoute({ focus = true } = {}) {
 async function enterBoardMode() {
   boardTick = 0;
   boardCache = null;
+  boardLastHtml = null;
   // Ubicación opcional para ordenar por cercanía (nunca bloquea)
   if (boardPosition === undefined) {
     boardPosition = null;
@@ -314,6 +322,7 @@ function leaveBoardMode() {
   }
   stopAutoScroll();
   boardCache = null;
+  boardLastHtml = null;
   if (wakeLock) {
     try {
       wakeLock.release();
