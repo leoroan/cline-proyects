@@ -125,9 +125,11 @@ t('guardar un lugar inexistente vuelve a la home', () => {
 location.hash = '#/panel';
 await handlers.hashchange();
 await settle();
-t('modo pantalla lista servicios con QR escaneable por lugar', () => {
-  assert.match(appEl.innerHTML, /Qué hay hoy/);
+t('modo pantalla: turno + secciones + QR por lugar', () => {
+  assert.match(appEl.innerHTML, /AHORA|PRÓXIMO|MAÑANA/); // turno de comida
   assert.match(appEl.innerHTML, /Refugio Municipal/);
+  assert.match(appEl.innerHTML, /ROPA/);
+  assert.match(appEl.innerHTML, /DORMIR/);
   assert.match(appEl.innerHTML, /<svg/); // QR
   assert.match(appEl.innerHTML, /ESCANEAR/);
 });

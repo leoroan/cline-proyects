@@ -6,17 +6,23 @@
    - pantalla grande → QR → #/guardar/:id → guardado en el
      teléfono de la persona → la home muestra primero
      "⭐ MIS LUGARES"
+   - #/panel → cartelería: turno de comida arriba (hora de
+     Argentina GMT-3), resto de servicios abajo, todo rotando
+     en carruseles SIN scroll.
 
-   - Sin estado global complejo: cada cambio de ruta re-renderiza.
-   - Al navegar, el foco va al título de la vista (lectores de
-     pantalla anuncian la nueva pantalla).
-   - El modo pantalla (#/panel) se actualiza solo cada 30 s y
-     pide WakeLock para que la TV no se apague.
+   - Toda la lógica horaria usa hora de Argentina
+     (America/Argentina/Buenos_Aires), aunque el dispositivo
+     tenga otra zona horaria.
    ============================================================ */
 
 import { SERVICES, serviceById } from './config/services.js';
+import { MEAL_SHIFTS } from './config/shifts.js';
 import { getPlaces } from './services/places.service.js';
-import { getServiceStatus } from './services/time.service.js';
+import {
+  getServiceStatus,
+  argentinaTime,
+  getShiftState,
+} from './services/time.service.js';
 import { getCurrentPosition, distanceMeters } from './services/geo.service.js';
 import { getSavedIds, isSaved, save, remove } from './services/saved.service.js';
 import { parseRoute } from './router.js';
@@ -31,13 +37,11 @@ import { renderSavedConfirm } from './views/saved.view.js';
 
 const app = document.getElementById('app');
 
-const NEARBY_METERS = 2000;      // "cerca tuyo" = a menos de 2 km a pie
-const BOARD_REFRESH_MS = 30_000; // el modo pantalla se actualiza solo
+const NEARBY_METERS = 2000; // "cerca tuyo" = a menos de 2 km a pie
 
-let boardTimer = null;
 let wakeLock = null;
 
-/* Prioridad para ordenar sin ubicación: abierto > abre hoy > cerrado */
+/* Prioridad para ordenar: abierto > abre hoy > cerrado */
 const TONE_RANK = { open: 0, soon: 1, closed: 2 };
 const rankOf = (item) => TONE_RANK[item.status?.tone ?? 'closed'];
 
@@ -61,7 +65,7 @@ async function renderHomeRoute() {
     if (withPlaces.length > 0) services = withPlaces;
 
     // Lo guardado en este teléfono, primero (más reciente arriba).
-    const now = new Date();
+    const now = argentinaTime();
     savedItems = getSavedIds()
       .map((id) => places.find((p) => p.id === id))
       .filter(Boolean)
@@ -87,7 +91,7 @@ async function renderResultsRoute(serviceId) {
       getPlaces(),
       getCurrentPosition(),
     ]);
-    const now = new Date();
+    const now = argentinaTime();
     const savedIds = new Set(getSavedIds());
 
     const items = places
@@ -136,7 +140,7 @@ async function renderSaveRoute(placeId) {
       return renderHomeRoute();
     }
     save(place.id);
-    paint(renderSavedConfirm({ place, now: new Date() }));
+    paint(renderSavedConfirm({ place, now: argentinaTime() }));
   } catch {
     paint(
       `<div class="page">
@@ -147,23 +151,90 @@ async function renderSaveRoute(placeId) {
   }
 }
 
+/* ============================================================
+   MODO PANTALLA / CARTELERÍA
+   ------------------------------------------------------------
+   - Los carruseles rotan cada BOARD_ROTATE_MS (mismo tick para
+     todo: rotación sincronizada y en calma).
+   - Los datos se releen cada BOARD_DATA_MS (cache, para no
+     pedir en cada rotación).
+   - La ubicación es opcional: si la hay, se ordena por cercanía
+     y se muestra "a X m"; si no, orden por urgencia.
+   ============================================================ */
+
+const BOARD_ROTATE_MS = 6_000;
+const BOARD_DATA_MS = 30_000;
+
+let boardTimer = null;
+let boardTick = 0;
+let boardCache = null;     // { places, at }
+let boardPosition;         // undefined = todavía no se pidió
+
+/* Tamaños de página según orientación (cartelería sin scroll). */
+function boardLayout() {
+  const landscape =
+    typeof matchMedia !== 'function' ||
+    matchMedia('(orientation: landscape)').matches;
+  return landscape
+    ? { heroPage: 3, stripPage: 4, rowsPerSection: 3 }
+    : { heroPage: 2, stripPage: 2, rowsPerSection: 3 };
+}
+
+async function boardPlaces() {
+  if (!boardCache || Date.now() - boardCache.at > BOARD_DATA_MS) {
+    boardCache = { places: await getPlaces(), at: Date.now() };
+  }
+  return boardCache.places;
+}
+
 async function renderBoardRoute({ focus = true } = {}) {
   try {
-    const places = await getPlaces();
-    const now = new Date();
+    const places = await boardPlaces();
+    const now = argentinaTime();
+    const layout = boardLayout();
+    const distOf = (p) =>
+      boardPosition
+        ? Math.round(
+            distanceMeters(boardPosition, { lat: p.latitude, lng: p.longitude })
+          )
+        : null;
+    const byUrgencyThenDistance = (a, b) =>
+      rankOf(a) - rankOf(b) || (a.distance ?? Infinity) - (b.distance ?? Infinity);
 
-    const sections = SERVICES.map((service) => {
-      const rows = places
+    // Turno de comida: qué se está sirviendo (o qué sigue)
+    const shiftState = getShiftState(MEAL_SHIFTS, now);
+    const heroService = shiftState ? serviceById(shiftState.shift.serviceId) : null;
+    let hero = null;
+    if (shiftState && heroService) {
+      const wantWhen = shiftState.state === 'tomorrow' ? 'MAÑANA' : 'HOY';
+      const items = places
+        .filter((p) => p.services.includes(heroService.id))
+        .map((p) => ({
+          place: p,
+          status: getServiceStatus(p.schedule?.[heroService.id], now),
+          distance: distOf(p),
+        }))
+        .filter((i) => i.status?.display?.when === wantWhen)
+        .sort(byUrgencyThenDistance);
+      hero = { ...shiftState, service: heroService, items };
+    }
+
+    // El resto de los servicios (ropa, dormir y cualquiera futuro)
+    const mealIds = new Set(MEAL_SHIFTS.map((s) => s.serviceId));
+    const strips = SERVICES.map((service) => {
+      if (mealIds.has(service.id)) return null;
+      const items = places
         .filter((p) => p.services.includes(service.id))
         .map((p) => ({
           place: p,
           status: getServiceStatus(p.schedule?.[service.id], now),
+          distance: distOf(p),
         }))
-        .sort((a, b) => rankOf(a) - rankOf(b));
-      return rows.length ? { service, rows } : null;
+        .sort(byUrgencyThenDistance);
+      return items.length ? { service, items } : null;
     }).filter(Boolean);
 
-    paint(renderBoard({ sections, now }), { focus });
+    paint(renderBoard({ hero, strips, layout, tick: boardTick, now }), { focus });
   } catch {
     if (focus) {
       paint(
@@ -176,11 +247,20 @@ async function renderBoardRoute({ focus = true } = {}) {
 }
 
 async function enterBoardMode() {
+  boardTick = 0;
+  boardCache = null;
+  // Ubicación opcional para ordenar por cercanía (nunca bloquea)
+  if (boardPosition === undefined) {
+    boardPosition = null;
+    getCurrentPosition().then((pos) => {
+      boardPosition = pos;
+    });
+  }
   await renderBoardRoute();
-  boardTimer = setInterval(
-    () => renderBoardRoute({ focus: false }),
-    BOARD_REFRESH_MS
-  );
+  boardTimer = setInterval(() => {
+    boardTick += 1;
+    renderBoardRoute({ focus: false });
+  }, BOARD_ROTATE_MS);
   // Que la pantalla no se apague (donde el navegador lo permita).
   try {
     wakeLock = (await navigator.wakeLock?.request('screen')) ?? null;
@@ -194,6 +274,7 @@ function leaveBoardMode() {
     clearInterval(boardTimer);
     boardTimer = null;
   }
+  boardCache = null;
   if (wakeLock) {
     try {
       wakeLock.release();

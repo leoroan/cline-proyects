@@ -98,3 +98,67 @@ export function getServiceStatus(schedule, now = new Date()) {
     display,
   };
 }
+
+/* ============================================================
+   HORA DE ARGENTINA (GMT-3) Y TURNOS DE COMIDA
+   ------------------------------------------------------------
+   Los horarios de los lugares son de Argentina. Si el
+   dispositivo (TV, PC, kiosk) tiene otra zona horaria, la
+   cartelería igual muestra lo correcto: siempre se calcula
+   con la hora de America/Argentina/Buenos_Aires.
+   ============================================================ */
+
+const AR_TIMEZONE = 'America/Argentina/Buenos_Aires';
+
+/** Devuelve un Date cuyos campos locales son la hora de Argentina. */
+export function argentinaTime(from = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: AR_TIMEZONE,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hourCycle: 'h23',
+  }).formatToParts(from);
+  const get = (type) => Number(parts.find((p) => p.type === type).value);
+  return new Date(
+    get('year'),
+    get('month') - 1,
+    get('day'),
+    get('hour'),
+    get('minute'),
+    get('second')
+  );
+}
+
+/**
+ * Turno de comida según la hora del día.
+ * shifts: [{ serviceId, from: 'HH:MM', to: 'HH:MM' }] (src/config/shifts.js)
+ * Devuelve:
+ *  { state: 'now',      shift } → estamos dentro del turno
+ *  { state: 'next',     shift } → el próximo turno de hoy
+ *  { state: 'tomorrow', shift } → el primer turno de mañana
+ *  null si no hay turnos configurados.
+ */
+export function getShiftState(shifts, now = new Date()) {
+  const parsed = (Array.isArray(shifts) ? shifts : [])
+    .filter((s) => s && s.from && s.to)
+    .map((s) => ({ ...s, start: toMinutes(s.from), end: toMinutes(s.to) }));
+  if (parsed.length === 0) return null;
+
+  const m = now.getHours() * 60 + now.getMinutes();
+
+  for (const s of parsed) {
+    if (m >= s.start && m < s.end) return { state: 'now', shift: s };
+  }
+  const upcoming = parsed
+    .filter((s) => s.start > m)
+    .sort((a, b) => a.start - b.start)[0];
+  if (upcoming) return { state: 'next', shift: upcoming };
+  return {
+    state: 'tomorrow',
+    shift: parsed.slice().sort((a, b) => a.start - b.start)[0],
+  };
+}

@@ -31,7 +31,7 @@ También funciona con cualquier hosting estático (Netlify, GitHub Pages, nginx�
 | `#/panel` | **Modo pantalla** para TV/monitor informativo     |
 | `#/guardar/:id` | Destino de los QR: guarda el lugar y muestra confirmación |
 
-El modo pantalla muestra todo lo que hay hoy, se actualiza solo cada 30 segundos y pide WakeLock para que la TV no se apague. Tipografía en `vmin` para leer a distancia.
+El modo pantalla es **cartelería**: alto fijo, SIN scroll — todo lo que no entra rota en carruseles sincronizados (cada 6 s), asi TODO esta a la vista. Arriba muestra el turno de comida (AHORA / PRÓXIMO / MAÑANA, segun hora de Argentina GMT-3) con los lugares que lo sirven hoy; abajo, el resto de los servicios en tarjetas. Relee los datos cada 30 s, pide WakeLock para que la TV no se apague y funciona en vertical u horizontal.
 
 ## Arquitectura
 
@@ -45,8 +45,11 @@ styles/
 src/
   main.js          # orquestación: rutas, orden, ubicación, refresco del panel
   router.js        # hash router mínimo
+  utils/
+    html.js · paginate.js # escape HTML y carrusel
   config/
     services.js    # ★ CATÁLOGO DE SERVICIOS (dato configurable, no código)
+    shifts.js      # ★ TURNOS DE COMIDA por defecto (rangos horarios)
   data/
     places.mock.js # datos de ejemplo (contrato de la futura API)
   services/
@@ -135,7 +138,24 @@ Pensado para el caso real: **la pantalla grande muestra, la persona se lo lleva*
 - En la home se ve primero **⭐ MIS LUGARES** (lo guardado, con el estado de todos sus servicios) y después los servicios.
 - En celulares el QR no aparece (no podés escanear tu propia pantalla): en su lugar cada tarjeta tiene un botón **＋ GUARDAR**.
 - **Auto-mantenible**: cada guardado vence a los **3 días**, la limpieza ocurre sola en cada lectura y hay un tope de 10 lugares. Si el storage está corrupto, se reinicia sin romper nada.
-- El QR se genera **localmente** (`src/vendor/qrcodegen.js`, Nayuki, MIT, vendored): funciona sin internet, ideal para TVs sin conexión.## Responsive: continuo, no breakpoints fijos
+- El QR se genera **localmente** (`src/vendor/qrcodegen.js`, Nayuki, MIT, vendored): funciona sin internet, ideal para TVs sin conexión.
+
+## 🕐 Turnos de comida (hora de Argentina)
+
+Todo el cálculo horario usa **America/Argentina/Buenos_Aires (GMT-3)**, aunque el dispositivo (TV, PC, kiosk) tenga otra zona horaria.
+
+Los turnos por defecto viven en `src/config/shifts.js` y se ajustan sin tocar la app:
+
+| Turno    | Rango por defecto |
+| -------- | ----------------- |
+| DESAYUNO | 06:00 → 10:30     |
+| ALMUERZO | 11:00 → 15:00     |
+| MERIENDA | 15:30 → 18:00     |
+| CENA     | 18:30 → 22:00     |
+
+La cartelería los usa para titular "AHORA · ALMUERZO" (o el próximo turno) y mostrar sólo los lugares que sirven esa comida **hoy**. Los horarios reales de cada lugar siguen saliendo de sus propios datos. Los servicios que no son comidas (ropa, dormir, duchas…) aparecen abajo como tarjetas-carrusel.
+
+## Responsive: continuo, no breakpoints fijos
 
 La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin saltos discretos:
 
@@ -145,7 +165,9 @@ La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin 
 - **Espaciado fluido** con `--gap: clamp(...)` y respeto al notch (`env(safe-area-inset-*)`).
 - **Celular en horizontal**: media query por altura que compacta header y botones.
 - **`svh`**: el alto nunca queda escondido detrás de la barra del navegador móvil.
-- **Modo pantalla**: secciones con la misma grilla fluida + tipografía en `vmin`.## Accesibilidad
+- **Modo pantalla**: secciones con la misma grilla fluida + tipografía en `vmin`.
+
+## Accesibilidad
 
 - Navegación con `<a>` nativos (funciona aunque falle JS), skip link, foco visible grueso.
 - Al cambiar de pantalla el foco va al título → los lectores de pantalla la anuncian.

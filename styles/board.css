@@ -1,109 +1,215 @@
 /* ============================================================
-   MODO PANTALLA (TV / monitor informativo)
-   Tipografía en vmin para leer a distancia. Grilla fluida:
-   las secciones se reparten solas según el ancho real
-   (2 columnas en 1080p, más en 4K/ultrawide).
-   Sin navegación compleja: la pantalla se actualiza sola.
+   MODO PANTALLA / CARTELERÍA (TV · PC grande · vertical y horizontal)
+   ------------------------------------------------------------
+   Reglas de cartelería:
+   - TODO a la vista: alto fijo y NO scrollea. Lo que no entra
+     rota en carruseles (main.js).
+   - Arriba: turno de comida (AHORA / PRÓXIMO / MAÑANA).
+   - Abajo: resto de los servicios en tarjetas.
+   - Tipografía en vmin para leer a distancia.
    ============================================================ */
 
 .board {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100svh;
-  padding: 2vmin 3vmin 4vmin;
-}
-
-.board-exit {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.5rem;
-  font-size: max(1rem, 1.8vmin);
-  font-weight: 700;
-  text-decoration: none;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden; /* cartelería: nunca scrollea */
+  padding: 2vmin 3vmin;
 }
 
 .board-header {
+  flex: none;
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
   gap: 2vmin;
-  border-bottom: 0.5vmin solid var(--ink);
-  padding-bottom: 1.2vmin;
-  margin-bottom: 2.5vmin;
+  border-bottom: 0.4vmin solid var(--ink);
+  padding-bottom: 1vmin;
+  margin-bottom: 2vmin;
+}
+
+.board-exit {
+  font-size: max(0.9rem, 1.6vmin);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .board-title {
+  flex: 1;
   margin: 0;
-  font-size: max(1.6rem, 4.2vmin);
+  font-size: max(1.5rem, 3.6vmin);
 }
 
 .board-clock {
   margin: 0;
-  font-size: max(1.4rem, 3.8vmin);
+  font-size: max(1.4rem, 3.6vmin);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
-.board-grid {
-  flex: 1;
-  display: grid;
-  gap: 2.2vmin;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
-  align-content: start;
-}
+/* ---------- Turno de comida (hero) ---------- */
 
-.board-section {
+.board-hero {
+  flex: 3;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   background: var(--card);
   border: 0.25vmin solid var(--line);
   border-radius: 2vmin;
-  padding: 2vmin 2.2vmin;
+  padding: 1.8vmin 2.2vmin 1.2vmin;
+  overflow: hidden;
 }
 
-.board-section h2 {
-  margin: 0 0 0.8vmin;
-  font-size: max(1.35rem, 3.4vmin);
+.board-hero__title {
+  display: flex;
+  align-items: center;
+  margin: 0 0 1.4vmin;
+  font-size: max(1.5rem, 4vmin);
 }
 
-.board-row {
+.hero-dot {
+  flex: none;
+  width: 0.5em;
+  height: 0.5em;
+  margin-right: 0.5ch;
+  border-radius: 50%;
+}
+
+.hero-dot--now {
+  background: var(--ok);
+}
+.hero-dot--next {
+  background: var(--warn);
+}
+.hero-dot--tomorrow {
+  background: var(--ink-soft);
+}
+
+.board-hero__cards {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: 2vmin;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.hero-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2vmin;
-  padding: 1vmin 0;
-  border-top: 0.15vmin solid var(--line);
+  gap: 1.6vmin;
+  min-height: 0;
+  border: 0.2vmin solid var(--line);
+  border-radius: 1.6vmin;
+  padding: 1.4vmin 1.6vmin;
+  overflow: hidden;
 }
 
-.board-row:first-of-type {
-  border-top: 0;
-  padding-top: 0;
+.hero-card--open {
+  border-color: var(--ok);
 }
 
-.board-row__info {
-  min-width: 0; /* permite que el texto se encoja sin desbordar */
-}
-
-.board-row__name {
-  margin: 0;
-  font-size: max(1.2rem, 2.9vmin);
-  font-weight: 800;
-}
-
-.board-row__meta {
-  margin: 0.2vmin 0 0;
-  font-size: max(1.05rem, 2.5vmin);
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-
-/* Punto verde para lo que está abierto (además del texto "AHORA") */
-.board-row--open .board-row__name::before {
+.hero-card--open .hero-card__name::before {
   content: "● ";
   color: var(--ok);
 }
 
-/* QR para llevarse el lugar al teléfono (escaneable a distancia) */
+.hero-card__info {
+  min-width: 0;
+}
+
+.hero-card__name {
+  margin: 0;
+  font-size: max(1.25rem, 3.2vmin);
+  font-weight: 800;
+}
+
+.hero-card__meta {
+  margin: 0.4vmin 0 0;
+  font-size: max(1rem, 2.5vmin);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.board-hero__empty {
+  margin: auto;
+  font-size: max(1.1rem, 2.8vmin);
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+/* ---------- Resto de los servicios ---------- */
+
+.board-strip {
+  flex: 2;
+  min-height: 0;
+  margin-top: 2vmin;
+  display: grid;
+  gap: 2vmin;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  overflow: hidden;
+}
+
+@media (orientation: portrait) {
+  .board-strip {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.strip-card {
+  min-height: 0;
+  background: var(--card);
+  border: 0.25vmin solid var(--line);
+  border-radius: 2vmin;
+  padding: 1.4vmin 1.8vmin 1vmin;
+  overflow: hidden;
+}
+
+.strip-card h3 {
+  margin: 0 0 0.8vmin;
+  font-size: max(1.1rem, 2.8vmin);
+}
+
+.strip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2vmin;
+  padding: 0.8vmin 0;
+  border-top: 0.12vmin solid var(--line);
+}
+
+.strip-row:first-of-type {
+  border-top: 0;
+}
+
+.strip-row__info {
+  min-width: 0;
+}
+
+.strip-row__name {
+  margin: 0;
+  font-size: max(0.95rem, 2.2vmin);
+  font-weight: 800;
+}
+
+.strip-row__meta {
+  margin: 0.2vmin 0 0;
+  font-size: max(0.85rem, 2vmin);
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.strip-row--open .strip-row__name::before {
+  content: "● ";
+  color: var(--ok);
+}
+
+/* QR (tamaños según contexto) */
 .board-qr {
   flex: none;
   text-align: center;
@@ -111,21 +217,64 @@
 
 .board-qr svg {
   display: block;
-  width: max(4rem, 8vmin);
-  height: max(4rem, 8vmin);
+  width: max(3.2rem, 6.5vmin);
+  height: max(3.2rem, 6.5vmin);
+}
+
+.board-qr--sm svg {
+  width: max(2.4rem, 4.2vmin);
+  height: max(2.4rem, 4.2vmin);
 }
 
 .board-qr__label {
-  margin: 0.4vmin 0 0;
-  font-size: max(0.7rem, 1.4vmin);
+  margin: 0.3vmin 0 0;
+  font-size: max(0.6rem, 1.3vmin);
   font-weight: 700;
   color: var(--ink-soft);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+}
+
+/* Puntos del carrusel */
+.dots {
+  margin: 0.8vmin 0 0;
+  line-height: 1;
+  text-align: center;
+}
+
+.dots span {
+  display: inline-block;
+  width: 0.9vmin;
+  min-width: 0.45rem;
+  height: 0.9vmin;
+  min-height: 0.45rem;
+  margin: 0 0.4vmin;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.dots span.on {
+  background: var(--ink);
 }
 
 .board-footer {
-  margin-top: 2.5vmin;
-  font-size: max(0.95rem, 1.8vmin);
+  flex: none;
+  margin-top: 1.6vmin;
+  font-size: max(0.9rem, 1.7vmin);
   font-weight: 600;
   color: var(--ink-soft);
+}
+
+/* Rotación suave (se desactiva con prefers-reduced-motion) */
+.board-hero__cards,
+.strip-card {
+  animation: board-fade 360ms ease;
+}
+
+@keyframes board-fade {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
 }
