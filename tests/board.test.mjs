@@ -13,7 +13,7 @@ const { renderBoard } = await import('../src/views/board.view.js');
 
 const LAYOUT = { heroPage: 3, rowsPerSection: 3, rotateMs: 6000 };
 const NO_ROTATE = { heroPage: 3, rowsPerSection: 3, rotateMs: 0 };
-const SERVICE = { id: 'dinner', label: 'CENA', icon: '🍽️', bi: 'bi-moon-stars' };
+const SERVICE = { id: 'dinner', label: 'CENA', icon: '🍽️' };
 const NOW = new Date(2024, 5, 3, 19, 30);
 
 const mk = (id) => ({
@@ -106,14 +106,15 @@ t('rotateMs 0 (reduced-motion) → nada rota: todo visible, sin carrusel', () =>
     assert.ok(html.includes(`Lugar ${id}`));
 });
 
-t('iconos de servicio usan Bootstrap Icons', () => {
+t('iconos de servicio: emoji con color (no monocromos)', () => {
   const html = renderBoard({
     hero: heroOf(['a']),
     strips: stripOf(['x']),
     layout: LAYOUT,
     now: NOW,
   });
-  assert.ok(html.includes('bi bi-moon-stars'));
+  assert.ok(html.includes('🍽️'));
+  assert.ok(!html.includes('bi-moon-stars'));
 });
 
 if (failed) {

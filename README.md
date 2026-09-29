@@ -44,6 +44,13 @@ El modo pantalla es **cartelería**. Arriba muestra el turno de comida (AHORA / 
 Relee los datos cada 30 s, pide WakeLock para que la TV no se apague y funciona en vertical u horizontal.
 
 
+
+## 🔤 Tipografía e íconos (decisión de diseño)
+
+- **Nunito** (vendored en `vendor/fonts/nunito`, ~16KB por peso, 400/600/700/800): redondeada, cálida y muy legible — amigable para personas con baja alfabetización y para leer a distancia. Fallback al system stack si no carga.
+- **Íconos de servicio: emoji con color** (🍞🍲☕🍽️👕🛏️). Probado en la práctica: el color hace que cada necesidad se reconozca de un vistazo, mejor que íconos lineales monocromos. Las secciones creadas desde gestión también usan emoji.
+- **Glifos utilitarios chicos** (CÓMO LLEGAR, reloj, teléfono, volver, menú de gestión): Bootstrap Icons, sutiles y estilizados.
+
 ## 🅱️ Bootstrap 5.3 — integración pragmática (vendored, offline)
 
 Bootstrap está integrado **sin romper los principios** del proyecto (ir al hueso, identidad propia, cero dependencias de red):
@@ -53,7 +60,7 @@ Bootstrap está integrado **sin romper los principios** del proyecto (ir al hues
 - **Qué se usa de Bootstrap**:
   - **Carousel** (`data-bs-ride`, `data-bs-interval` configurable desde ⚙️ → 🖥️ PANTALLA): rota el turno y las filas de cada tarjeta de la cartelería. Con `prefers-reduced-motion` nada rota: se muestra todo.
   - **Spinner** (`spinner-border`) en "Buscando lugares…".
-  - **Bootstrap Icons** en toda la UI (servicios, CÓMO LLEGAR, GUARDAR, volver, gestión). El catálogo acepta `bi` por servicio; las secciones creadas a mano siguen con emoji.
+  - **Bootstrap Icons** sólo en glifos chicos utilitarios (ubicación, reloj, teléfono, volver, gestión): aportan lo estilizado sin volverse protagonistas.
   - **Reboot + variables CSS + `visually-hidden`**: base consistente que hereda nuestro `font-size` fluido (todo escala con el viewport igual que antes).
 - **Qué NO se usa y por qué**: modales, toasts, navbars, dropdowns, offcanvas, tooltips, accordions… no ayudan a una persona a conseguir comida, ropa o dónde dormir. Sigue siendo IR AL HUESO: Bootstrap es el piso, no la casa.
 

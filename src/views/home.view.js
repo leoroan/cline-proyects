@@ -21,7 +21,7 @@ export function renderHome({ services, savedItems = [] }) {
       savedItems.length > 0
         ? `
     <section class="saved-section" aria-labelledby="saved-title">
-      <h2 class="saved-title" id="saved-title"><i class="bi bi-bookmark-star-fill" aria-hidden="true"></i> MIS LUGARES</h2>
+      <h2 class="saved-title" id="saved-title">⭐ MIS LUGARES</h2>
       <p class="saved-note">
         Guardados en este teléfono. Se borran solos a los ${SAVED_TTL_DAYS} días.
       </p>
