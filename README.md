@@ -1,6 +1,6 @@
 # Ayuda Cerca
 
-> **Versión 0.2.0** — ahora con base Bootstrap 5.3 (vendored, sin CDN).
+> **Versión 0.3.0** — datos en la nube con Supabase (auth incluido), caché offline y modo local de respaldo.
 
 **Punto de información comunitario digital**: comunica rápidamente servicios esenciales (comida, ropa, dónde dormir) a personas en situación de calle o con acceso limitado a la información.
 
@@ -214,6 +214,17 @@ La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin 
 - Áreas táctiles grandes (botones de servicio ≥ 5.75rem, CÓMO LLEGAR ≥ 3.9rem).
 - Contraste AA (texto y estados ≥ 4.5:1), `prefers-reduced-motion` respetado.
 - Tipografía y grillas fluidas que se adaptan solas a cualquier viewport (ver "Responsive").
+
+
+## ☁️ Supabase (nube) — cómo está conectado
+
+- **Cliente vendored** (`vendor/supabase/supabase.js`, UMD oficial): browser-direct a PostgREST + Auth, sin backend propio.
+- **Credenciales públicas por diseño** (`src/config/supabase.js`): la seguridad la da **RLS** (ver `supabase/schema.sql`), no el secreto. La `service_role` solo vive en la Edge Function.
+- **Caché por versión**: la app pregunta solo `data_version()`; si no cambió, no baja nada. Guarda lugares + secciones + versión en localStorage. Si falla la red, sirve la última caché; y como último recurso, el mock local. Nunca queda en blanco.
+- **Login**: Supabase Auth. La gente escribe su *usuario* (se mapea a `usuario@acerca.local`) o un email completo (ej. `leoroan@gmail.com`) tal cual. Roles en `profiles` (admin/editor; el primer usuario queda admin solo).
+- **Gestión**: lugares y secciones escriben directo a las tablas (RLS: solo logueados). El equipo se gestiona por la Edge Function `manage-collaborator` (solo admins).
+- **Modo local automático**: sin librería/red (tests, demo offline), toda la gestión cae a localStorage como antes — misma UI.
+- **Setup**: `supabase/README.md` (5 pasos). Export/import ahora es **v2** (lugares + secciones; los usuarios viven en Auth, no se exportan).
 
 ## 🔐 Zona de gestión (`#/admin`)
 

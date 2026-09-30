@@ -50,7 +50,7 @@ export async function renderAdmin(sub = 'menu', param = null) {
   lastSub = sub;
   lastParam = param;
 
-  const user = currentUser();
+  const user = await currentUser();
   if (!user) {
     paint(renderAdminLogin());
     return;
@@ -79,16 +79,17 @@ export async function renderAdmin(sub = 'menu', param = null) {
       return;
     }
     case 'secciones':
+      await getPlaces(); // calienta el caché de secciones
       paint(renderAdminServices({ flash: f }));
       return;
     case 'equipo':
-      paint(renderAdminUsers({ users: getUsers(), flash: f }));
+      paint(renderAdminUsers({ users: await getUsers(), flash: f }));
       return;
     case 'pantalla':
       paint(renderAdminBoardSettings({ settings: getBoardSettings(), flash: f }));
       return;
     case 'datos':
-      paint(renderAdminData({ exportText: exportData(), flash: f }));
+      paint(renderAdminData({ exportText: await exportData(), flash: f }));
       return;
     default:
       paint(renderAdminMenu({ user, flash: f }));
@@ -109,7 +110,7 @@ export async function handleAdminClick(event) {
       return true;
 
     case 'toggle-active':
-      setPlaceActive(el.dataset.id, el.dataset.active !== '1');
+      await setPlaceActive(el.dataset.id, el.dataset.active !== '1');
       flash = '✔ Se actualizó el estado.';
       rerender();
       return true;
@@ -117,7 +118,7 @@ export async function handleAdminClick(event) {
     case 'delete-place': {
       // Confirmación en dos toques: más claro que una ventana de diálogo
       if (el.dataset.armed === '1') {
-        deletePlace(el.dataset.id);
+        await deletePlace(el.dataset.id);
         flash = '✔ Lugar borrado.';
         rerender();
       } else {
@@ -136,13 +137,13 @@ export async function handleAdminClick(event) {
     }
 
     case 'remove-service':
-      removeCustomService(el.dataset.id);
+      await removeCustomService(el.dataset.id);
       flash = '✔ Sección borrada.';
       rerender();
       return true;
 
     case 'remove-user': {
-      const r = removeUser(el.dataset.username);
+      const r = await removeUser(el.dataset.id);
       flash = r.error ?? '✔ Usuario borrado.';
       rerender();
       return true;
@@ -315,7 +316,7 @@ export async function handleAdminSubmit(event) {
 
   if (kind === 'login') {
     const fd = new FormData(form);
-    const user = login(fd.get('username'), fd.get('password'));
+    const user = await login(fd.get('username'), fd.get('password'));
     if (!user) {
       paint(
         renderAdminLogin({
@@ -338,10 +339,10 @@ export async function handleAdminSubmit(event) {
     }
     const editing = form.dataset.editing;
     if (editing) {
-      updatePlace({ ...place, id: editing });
+      await updatePlace({ ...place, id: editing });
       flash = '✔ Cambios guardados.';
     } else {
-      addPlace(place);
+      await addPlace(place);
       flash = '✔ Lugar agregado. Ya se ve en la app.';
     }
     location.hash = '#/admin/lugares';
@@ -355,7 +356,7 @@ export async function handleAdminSubmit(event) {
       paint(renderAdminServices({ error: 'La sección necesita un nombre (ej: DUCHAS).' }));
       return true;
     }
-    addCustomService({ label, icon: String(fd.get('icon') ?? '').trim() || '📌' });
+    await addCustomService({ label, icon: String(fd.get('icon') ?? '').trim() || '📌' });
     flash = '✔ Sección creada. Ya podés usarla en los lugares.';
     rerender();
     return true;
@@ -363,13 +364,13 @@ export async function handleAdminSubmit(event) {
 
   if (kind === 'user') {
     const fd = new FormData(form);
-    const r = addUser({
+    const r = await addUser({
       name: fd.get('name'),
       username: fd.get('username'),
       password: fd.get('password'),
     });
     if (r.error) {
-      paint(renderAdminUsers({ users: getUsers(), error: r.error }));
+      paint(renderAdminUsers({ users: await getUsers(), error: r.error }));
       return true;
     }
     flash = `✔ ${r.user.name} ya puede entrar con su usuario.`;
@@ -401,8 +402,8 @@ export async function handleAdminSubmit(event) {
       return true;
     }
     try {
-      const res = importData(text);
-      flash = `✔ Listo: se sumaron ${res.places} lugares, ${res.services} secciones y ${res.users} usuarios.`;
+      const res = await importData(text);
+      flash = `✔ Listo: se sumaron ${res.places} lugares y ${res.services} secciones${res.users ? `, y ${res.users} usuarios` : ''}.`;
       renderAdmin('datos');
     } catch {
       paint(

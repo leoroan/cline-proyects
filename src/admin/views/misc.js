@@ -95,10 +95,12 @@ export function renderAdminUsers({ users, flash = null, error = null } = {}) {
           </div>
           <div class="admin-place__actions">
             ${
-              u.builtin
-                ? '<span class="badge">PERMANENTE</span>'
-                : `<button type="button" class="btn-danger" data-action="remove-user"
-                     data-username="${esc(u.username)}">BORRAR</button>`
+              u.role === 'admin'
+                ? '<span class="badge">ADMIN</span>'
+                : u.builtin
+                  ? '<span class="badge">PERMANENTE</span>'
+                  : `<button type="button" class="btn-danger" data-action="remove-user"
+                       data-id="${esc(u.id ?? u.username)}">BORRAR</button>`
             }
           </div>
         </article>`
@@ -120,7 +122,7 @@ export function renderAdminUsers({ users, flash = null, error = null } = {}) {
       <div class="field">
         <label for="f-upass">CLAVE <em>*</em></label>
         <input id="f-upass" name="password" type="text" required placeholder="Ej: norte2024" />
-        <p class="field-hint">Fácil de recordar para la persona. Mínimo 4 caracteres.</p>
+        <p class="field-hint">Fácil de recordar para la persona. Mínimo 6 caracteres.</p>
       </div>
       <button class="btn-directions admin-submit" type="submit">SUMAR AL EQUIPO</button>
     </form>

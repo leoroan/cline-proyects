@@ -1,4 +1,7 @@
-/* Tests de la zona de gestión (auth, datos locales, maps, catálogo).
+/* Tests de la zona de gestión — modo LOCAL (sin Supabase).
+   En Node no hay window.supabase, así que la fachada cae a
+   localStorage: se prueban auth, datos, maps, catálogo y
+   export/import con la misma lógica de siempre.
    Uso: node tests/admin.test.mjs */
 
 import assert from 'node:assert/strict';
@@ -44,39 +47,39 @@ async function ta(name, fn) {
   }
 }
 
-console.log('\nAutenticación:');
+console.log('\nAutenticación (modo local):');
 
-t('login incorrecto → null', () => {
-  assert.equal(auth.login('admin', 'malisima'), null);
-  assert.equal(auth.currentUser(), null);
+await ta('login incorrecto → null', async () => {
+  assert.equal(await auth.login('admin', 'malisima'), null);
+  assert.equal(await auth.currentUser(), null);
 });
 
-t('login correcto → sesión activa', () => {
-  const u = auth.login('admin', 'comedor2024');
+await ta('login correcto → sesión activa', async () => {
+  const u = await auth.login('admin', 'comedor2024');
   assert.ok(u);
-  assert.equal(auth.currentUser().u, 'admin');
+  assert.equal((await auth.currentUser()).u, 'admin');
 });
 
-t('agregar colaborador y entra con su clave', () => {
-  const r = auth.addUser({ name: 'María Gómez', username: 'maria.norte', password: 'norte123' });
+await ta('agregar colaborador y entra con su clave', async () => {
+  const r = await auth.addUser({ name: 'María Gómez', username: 'maria.norte', password: 'norte123' });
   assert.ok(r.user);
-  assert.ok(auth.login('maria.norte', 'norte123'));
+  assert.ok(await auth.login('maria.norte', 'norte123'));
 });
 
-t('usuario duplicado rechazado', () => {
-  assert.ok(auth.addUser({ name: 'Otra María', username: 'maria.norte', password: 'xxxx' }).error);
+await ta('usuario duplicado rechazado', async () => {
+  assert.ok((await auth.addUser({ name: 'Otra María', username: 'maria.norte', password: 'xxxxxx' })).error);
 });
 
-t('validaciones amigables', () => {
-  assert.ok(auth.addUser({ name: 'A', username: 'abcde', password: '1234' }).error);
-  assert.ok(auth.addUser({ name: 'Ana', username: 'ab', password: '1234' }).error);
-  assert.ok(auth.addUser({ name: 'Ana', username: 'abcde', password: '12' }).error);
+await ta('validaciones amigables', async () => {
+  assert.ok((await auth.addUser({ name: 'A', username: 'abcde', password: '123456' })).error);
+  assert.ok((await auth.addUser({ name: 'Ana', username: 'ab', password: '123456' })).error);
+  assert.ok((await auth.addUser({ name: 'Ana', username: 'abcde', password: '12' })).error);
 });
 
-t('borrar: locales sí, permanentes no', () => {
-  assert.ok(auth.removeUser('admin').error);
-  assert.ok(auth.removeUser('maria.norte').ok);
-  assert.equal(auth.login('maria.norte', 'norte123'), null);
+await ta('borrar: locales sí, permanentes no', async () => {
+  assert.ok((await auth.removeUser('admin')).error);
+  assert.ok((await auth.removeUser('maria.norte')).ok);
+  assert.equal(await auth.login('maria.norte', 'norte123'), null);
 });
 
 console.log('\nLugares gestionados:');
@@ -96,15 +99,15 @@ const NUEVO = {
 
 let nuevoId;
 await ta('agregar lugar aparece en la app', async () => {
-  const p = data.addPlace(NUEVO);
+  const p = await data.addPlace(NUEVO);
   nuevoId = p.id;
   const all = await getPlaces();
   assert.ok(all.some((x) => x.id === nuevoId));
-  assert.ok(all.length >= 9); // 8 base + 1 local
+  assert.ok(all.length >= 9);
 });
 
 await ta('desactivar lo saca de la app, pero sigue en gestión', async () => {
-  data.setPlaceActive(nuevoId, false);
+  await data.setPlaceActive(nuevoId, false);
   const pub = await getPlaces();
   assert.ok(!pub.some((x) => x.id === nuevoId));
   const admin = await getPlaces({ includeInactive: true });
@@ -112,7 +115,7 @@ await ta('desactivar lo saca de la app, pero sigue en gestión', async () => {
 });
 
 await ta('editar un lugar base no toca el origen (override)', async () => {
-  data.updatePlace({
+  await data.updatePlace({
     id: 'comedor-san-jose',
     name: 'Comedor San José (nuevo nombre)',
     services: ['lunch'],
@@ -124,25 +127,25 @@ await ta('editar un lugar base no toca el origen (override)', async () => {
 });
 
 await ta('borrar base lo oculta; borrar local lo elimina', async () => {
-  data.deletePlace('el-roperito');
+  await data.deletePlace('el-roperito');
   assert.ok(!(await getPlaces()).some((x) => x.id === 'el-roperito'));
-  data.deletePlace(nuevoId);
+  await data.deletePlace(nuevoId);
   assert.ok(!(await getPlaces({ includeInactive: true })).some((x) => x.id === nuevoId));
 });
 
 console.log('\nSecciones nuevas:');
 
-t('crear sección aparece en el catálogo', () => {
-  const svc = data.addCustomService({ label: 'Duchas', icon: '🚿' });
+await ta('crear sección aparece en el catálogo', async () => {
+  const svc = await data.addCustomService({ label: 'Duchas', icon: '🚿' });
   assert.equal(svc.id, 'duchas');
   assert.equal(svc.label, 'DUCHAS');
   assert.equal(catalog.getServiceById('duchas').icon, '🚿');
 });
 
-t('nombre repetido genera id único', () => {
-  const svc = data.addCustomService({ label: 'DUCHAS', icon: '🚿' });
+await ta('nombre repetido genera id único', async () => {
+  const svc = await data.addCustomService({ label: 'DUCHAS', icon: '🚿' });
   assert.equal(svc.id, 'duchas-2');
-  data.removeCustomService('duchas-2');
+  await data.removeCustomService('duchas-2');
 });
 
 console.log('\nLinks de Google Maps:');
@@ -169,34 +172,26 @@ t('basura → null', () => {
   assert.equal(parseMapsLink(''), null);
 });
 
-console.log('\nExportar / importar:');
+console.log('\nExportar / importar (modo local):');
 
-t('exportar → limpiar → importar devuelve todo', () => {
-  data.addCustomService({ label: 'Viandas', icon: '🥡' });
-  auth.addUser({ name: 'Juan P', username: 'juan.sur', password: 'sur123' });
-  const dump = data.exportData();
+await ta('exportar → limpiar → importar devuelve todo', async () => {
+  await data.addCustomService({ label: 'Viandas', icon: '🥡' });
+  await auth.addUser({ name: 'Juan P', username: 'juan.sur', password: 'sur123' });
+  const dump = await data.exportData();
 
   store.clear(); // otro aparato, vacío
-  const res = data.importData(dump);
+  const res = await data.importData(dump);
 
   assert.ok(res.services >= 2);
   assert.ok(catalog.getServiceById('viandas'));
   assert.ok(catalog.getServiceById('duchas'));
-  assert.ok(auth.login('juan.sur', 'sur123'));
-  // el override del lugar base también viajó
+  assert.ok(await auth.login('juan.sur', 'sur123'));
   assert.ok(data.getOverrides()['comedor-san-jose']?.edited);
 });
 
-t('importar basura lanza error (el caller lo atrapa)', () => {
-  assert.throws(() => data.importData('no es json'));
+await ta('importar basura lanza error (el caller lo atrapa)', async () => {
+  await assert.rejects(() => data.importData('no es json'));
 });
-
-if (failed) {
-  console.error(`\n${failed} test(s) fallaron`);
-  process.exit(1);
-}
-console.log('\nTests de gestión OK ✔\n');
-
 
 console.log('\nAjustes de cartelería:');
 
@@ -211,7 +206,14 @@ t('guardar y leer (con límites sanos)', () => {
   data.saveBoardSettings({ autoScroll: false, autoScrollSeconds: 999, rotateSeconds: 1 });
   const s = data.getBoardSettings();
   assert.equal(s.autoScroll, false);
-  assert.equal(s.autoScrollSeconds, 120); // clamp máximo
-  assert.equal(s.rotateSeconds, 2);       // clamp mínimo
+  assert.equal(s.autoScrollSeconds, 120);
+  assert.equal(s.rotateSeconds, 2);
   data.saveBoardSettings({ autoScroll: true, autoScrollSeconds: 10, rotateSeconds: 6 });
 });
+
+if (failed) {
+  console.error(`\n${failed} test(s) fallaron`);
+  process.exit(1);
+}
+console.log('\nTests de gestión OK ✔\n');
+

@@ -161,7 +161,7 @@ t('sin sesión, la gestión pide usuario y clave', () => {
 });
 
 const { login, logout } = await import('../src/admin/auth.service.js');
-login('admin', 'comedor2024');
+await login('admin', 'comedor2024');
 location.hash = '#/admin';
 await handlers.hashchange();
 await settle();
@@ -213,7 +213,7 @@ t('compartir datos ofrece sacar y traer', () => {
   assert.match(appEl.innerHTML, /TRAER DATOS/);
 });
 
-logout();
+await logout();
 location.hash = '#/';
 await handlers.hashchange();
 await settle();
