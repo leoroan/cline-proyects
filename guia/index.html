@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-7zbrzrP86kyJA5X2jS+s+uDqyWay/z9g/VoleMi3n3U='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://bpvfgyxwdjroxypbmejy.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
-  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <title>Guía — Ayuda Cerca: comida, ropa y dónde dormir cerca tuyo</title>
   <meta name="description" content="Qué es Ayuda Cerca y cómo usarla: información comunitaria simple para encontrar dónde comer, conseguir ropa y dónde dormir. Gratis, sin registro, desde cualquier celular." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://myselfproductions.me/cline-proyects/guia/" />
   <meta name="theme-color" content="#faf6ef" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-7zbrzrP86kyJA5X2jS+s+uDqyWay/z9g/VoleMi3n3U='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://bpvfgyxwdjroxypbmejy.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Ayuda Cerca" />
   <meta property="og:title" content="Ayuda Cerca — Guía de la herramienta comunitaria" />
   <meta property="og:description" content="Dónde comer hoy, dónde dan ropa, dónde dormir. Información simple, al instante, desde cualquier celular." />
   <meta property="og:url" content="https://myselfproductions.me/cline-proyects/guia/" />
@@ -20,101 +21,203 @@
   <link rel="stylesheet" href="../styles/tokens.css" />
   <style>
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0; background: var(--paper); color: var(--ink);
-      font-family: var(--font); line-height: 1.55;
+      font-family: var(--font); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 46rem; margin-inline: auto; padding: 0 1.25rem; }
+    .wrap { max-width: 62rem; margin-inline: auto; padding-inline: 1.5rem; }
+
+    /* ---------- Header ---------- */
     header.top {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 1rem; padding: 1rem 0; flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: center; gap: 1rem;
+      flex-wrap: wrap; padding: 1.2rem 0;
     }
-    .brand { font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--ink); }
+    .brand { display: inline-flex; align-items: center; gap: .6rem;
+      font-weight: 800; font-size: 1.35rem; text-decoration: none; color: var(--ink); }
+    .brand .logo { width: 2.6rem; height: 2.6rem; display: grid; place-items: center;
+      background: var(--brand); border-radius: .8rem; font-size: 1.4rem; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-      min-height: 3.2rem; padding: 0 1.4rem; border-radius: 1rem;
+      min-height: 3.2rem; padding: 0 1.6rem; border-radius: 1rem;
       background: var(--brand); color: #fff; font-weight: 800; font-size: 1.05rem;
       text-decoration: none; letter-spacing: .02em; border: 0; cursor: pointer;
     }
-    .btn--ghost { background: transparent; color: var(--brand); border: .14rem solid var(--brand); }
-    .hero { padding: 2.5rem 0 1.5rem; }
-    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); margin: 0 0 .8rem; line-height: 1.1; }
-    .hero p { font-size: 1.25rem; color: var(--ink-soft); margin: 0 0 1.6rem; max-width: 34rem; }
-    section { padding: 1.8rem 0; border-top: .14rem solid var(--line); }
-    h2 { font-size: 1.7rem; margin: 0 0 1rem; }
-    .steps { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
-    .card {
-      background: var(--card); border: .16rem solid var(--line);
-      border-radius: var(--radius); padding: 1.2rem;
+    .btn:active { background: var(--brand-strong); }
+    .btn--ghost { background: transparent; color: var(--brand);
+      border: .16rem solid var(--brand); }
+
+    /* ---------- Hero: texto centrado + celular ---------- */
+    .hero { padding-block: clamp(2.5rem, 7vw, 4.5rem) clamp(2.5rem, 6vw, 4rem); }
+    .hero__grid {
+      display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center;
+      grid-template-columns: 1fr;
     }
-    .card .big { font-size: 2.2rem; }
-    .card h3 { margin: .4rem 0 .3rem; font-size: 1.15rem; }
-    .card p { margin: 0; color: var(--ink-soft); font-weight: 600; }
-    .services { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
-    .svc { background: var(--card); border: .16rem solid var(--line); border-radius: 1rem;
-      padding: 1rem; text-align: center; font-weight: 800; font-size: 1.05rem; }
-    .svc span { display: block; font-size: 2.2rem; margin-bottom: .3rem; }
-    ul.tick { padding-left: 1.2rem; margin: 0; }
-    ul.tick li { margin: .45rem 0; }
-    details { border-top: .12rem solid var(--line); padding: .9rem 0; }
-    details:first-of-type { border-top: 0; }
-    summary { font-weight: 800; font-size: 1.1rem; cursor: pointer; }
-    details p { margin: .5rem 0 0; color: var(--ink-soft); }
-    footer { border-top: .14rem solid var(--line); padding: 1.5rem 0 3rem; color: var(--ink-soft); font-size: .95rem; }
-    footer a { color: var(--brand); font-weight: 700; }
-    form.contact { display: flex; flex-direction: column; gap: .8rem; max-width: 30rem; }
+    @media (min-width: 52rem) { .hero__grid { grid-template-columns: 1.15fr .85fr; } }
+    .hero__text { text-align: center; }
+    .hero h1 { font-size: clamp(2.3rem, 6vw, 3.6rem); line-height: 1.1; margin: 0 0 1rem; }
+    .hero h1 em { font-style: normal; color: var(--brand); }
+    .hero__sub { font-size: clamp(1.1rem, 2.5vw, 1.3rem); color: var(--ink-soft);
+      margin: 0 auto 1.8rem; max-width: 32rem; font-weight: 600; }
+    .cta-row { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+    .hero__note { margin: 1.2rem 0 0; color: var(--ink-soft);
+      font-weight: 700; font-size: .95rem; letter-spacing: .03em; }
+
+    /* Celular decorativo (preview del producto, CSS puro) */
+    .phone {
+      width: min(17rem, 80%); margin-inline: auto;
+      border: .45rem solid var(--ink); border-radius: 2.2rem;
+      background: var(--card); padding: 1.1rem 1rem 1.3rem;
+      box-shadow: 0 1.2rem 2.4rem rgba(28, 23, 18, .12);
+      transform: rotate(2deg);
+    }
+    .phone__screen { display: flex; flex-direction: column; gap: .8rem; }
+    .phone__title { text-align: center; font-weight: 800; margin: 0; font-size: 1.05rem; }
+    .phone__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+    .phone__tile { display: grid; place-items: center; gap: .1rem;
+      border: .12rem solid var(--line); border-radius: .7rem; padding: .55rem .2rem;
+      font-size: 1.2rem; }
+    .phone__tile small { font-size: .5rem; font-weight: 800; color: var(--ink-soft); }
+    .phone__btn { background: var(--brand); color: #fff; border-radius: .7rem;
+      min-height: 1.7rem; display: grid; place-items: center;
+      font-size: .7rem; font-weight: 800; letter-spacing: .04em; }
+
+    /* ---------- Secciones ---------- */
+    section { padding-block: clamp(2.6rem, 7vw, 4.2rem); text-align: center; }
+    .band { background: var(--card); border-block: .14rem solid var(--line); }
+    .overline { display: block; color: var(--brand); font-weight: 800;
+      font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 .5rem; }
+    h2 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 0 0 .6rem; line-height: 1.15; }
+    .section-sub { color: var(--ink-soft); font-weight: 600;
+      max-width: 36rem; margin: 0 auto 2.2rem; }
+
+
+    /* Pasos y tarjetas */
+    .grid { display: grid; gap: 1.2rem; }
+    .grid--steps { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+    .grid--two { grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); }
+    .grid--principles { grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+    .grid--services { grid-template-columns: repeat(auto-fit, minmax(8.2rem, 1fr)); }
+    .card {
+      background: var(--paper); border: .16rem solid var(--line);
+      border-radius: var(--radius); padding: 1.5rem 1.3rem;
+    }
+    .card .icon { font-size: 1.5rem; color: var(--brand); display: inline-flex;
+      width: 3.4rem; height: 3.4rem; align-items: center; justify-content: center;
+      background: var(--highlight); border-radius: 1rem; margin-bottom: .6rem; }
+    .card h3 { margin: .2rem 0 .4rem; font-size: 1.15rem; }
+    .card p { margin: 0; color: var(--ink-soft); font-weight: 600; font-size: .98rem; }
+    .card p strong { color: var(--ink); }
+    .svc { background: var(--paper); border: .16rem solid var(--line);
+      border-radius: 1.1rem; padding: 1.1rem .5rem; font-weight: 800; font-size: 1rem; }
+    .svc span { display: block; font-size: 2.1rem; margin-bottom: .3rem; }
+
+    /* FAQ y formulario (centrados, lectura cómoda) */
+    .faq { max-width: 42rem; margin-inline: auto; text-align: left; }
+    details { border-bottom: .12rem solid var(--line); padding: .9rem .2rem; }
+    details:last-child { border-bottom: 0; }
+    summary { font-weight: 800; font-size: 1.08rem; cursor: pointer; }
+    details p { margin: .5rem 0 0; color: var(--ink-soft); font-weight: 600; }
+
+    form.contact { display: flex; flex-direction: column; gap: .85rem;
+      max-width: 32rem; margin-inline: auto; text-align: left;
+      background: var(--paper); border: .16rem solid var(--line);
+      border-radius: var(--radius); padding: 1.6rem; }
     form.contact label { font-weight: 800; font-size: .95rem; }
     form.contact textarea, form.contact input {
       font: inherit; padding: .8rem 1rem; width: 100%;
       border: .14rem solid var(--line); border-radius: .8rem;
       background: var(--card); color: var(--ink);
     }
+    form.contact textarea:focus, form.contact input:focus {
+      border-color: var(--brand); outline: none;
+    }
     .contact-status { margin: 0; }
     .contact-status.is-error { color: var(--bad); font-weight: 700; }
-    .contact-ok { background: var(--highlight); border-radius: 1rem; padding: 1rem 1.2rem; font-weight: 700; margin: 0; }
+    .contact-ok { background: var(--highlight); border-radius: 1rem;
+      padding: 1.2rem 1.4rem; font-weight: 700; margin: 0 auto; max-width: 32rem;
+      border: .14rem solid var(--ok); color: var(--ok); }
+
+    footer { border-top: .14rem solid var(--line); padding: 1.8rem 0 3rem;
+      color: var(--ink-soft); font-size: .95rem; text-align: center; }
+    footer a { color: var(--brand); font-weight: 700; }
+    footer p { margin: .3rem 0; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="top">
-      <a class="brand" href="./">🍲 Ayuda Cerca</a>
-      <a class="btn" href="../">ENTRAR A LA APP →</a>
+      <a class="brand" href="./"><span class="logo">🍲</span> Ayuda Cerca</a>
+      <a class="btn" href="../">ENTRAR A LA APP</a>
     </header>
+  </div>
 
-    <section class="hero" style="border-top: 0;">
-      <h1>¿Qué necesitás?</h1>
-      <p>
-        Ayuda Cerca te dice dónde <strong>desayunar, almorzar, merendar y cenar</strong>,
-        dónde entregan <strong>ropa</strong> y dónde hay un <strong>lugar para dormir</strong>.
-        Gratis, sin registro, desde cualquier celular.
-      </p>
-      <a class="btn" href="../">ENTRAR AHORA →</a>
-    </section>
-
-    <section>
-      <h2>Cómo se usa</h2>
-      <div class="steps">
-        <div class="card">
-          <div class="big">1️⃣</div>
-          <h3>Elegí qué necesitás</h3>
-          <p>Botones grandes con ícono. No hace falta leer mucho.</p>
+  <div class="wrap hero">
+    <div class="hero__grid">
+      <div class="hero__text">
+        <h1>¿Qué <em>necesitás</em>?</h1>
+        <p class="hero__sub">
+          Dónde <strong>desayunar, almorzar, merendar y cenar</strong>, dónde entregan
+          <strong>ropa</strong> y dónde hay un <strong>lugar para dormir</strong>.
+          En segundos, desde cualquier celular.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="../">ENTRAR AHORA →</a>
+          <a class="btn btn--ghost" href="#como-funciona">Cómo funciona</a>
         </div>
-        <div class="card">
-          <div class="big">2️⃣</div>
-          <h3>Mirá dónde y a qué hora</h3>
-          <p>Nombre, dirección, horario y si está abierto ahora. Nada más.</p>
-        </div>
-        <div class="card">
-          <div class="big">3️⃣</div>
-          <h3>Tocá CÓMO LLEGAR</h3>
-          <p>Se abre el mapa de tu teléfono con el camino a pie.</p>
+        <p class="hero__note">GRATIS · SIN REGISTRO · SIN PUBLICIDAD</p>
+      </div>
+      <div class="phone" aria-hidden="true">
+        <div class="phone__screen">
+          <p class="phone__title">¿QUÉ NECESITÁS?</p>
+          <div class="phone__grid">
+            <div class="phone__tile">🍞<small>DESAYUNO</small></div>
+            <div class="phone__tile">🍲<small>ALMUERZO</small></div>
+            <div class="phone__tile">☕<small>MERIENDA</small></div>
+            <div class="phone__tile">🍽️<small>CENA</small></div>
+            <div class="phone__tile">👕<small>ROPA</small></div>
+            <div class="phone__tile">🛏️<small>DORMIR</small></div>
+          </div>
+          <div class="phone__btn">📍 CÓMO LLEGAR</div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
 
+
+  <div class="band">
+    <div class="wrap">
+      <section id="como-funciona">
+        <span class="overline">Cómo funciona</span>
+        <h2>Ver, tocar y llegar. Nada más.</h2>
+        <p class="section-sub">Pensada para usarse sin explicación, incluso con poca lectura.</p>
+        <div class="grid grid--steps">
+          <div class="card">
+            <span class="icon">1️⃣</span>
+            <h3>Elegí qué necesitás</h3>
+            <p>Botones grandes con ícono. Sin menús, sin vueltas.</p>
+          </div>
+          <div class="card">
+            <span class="icon">2️⃣</span>
+            <h3>Mirá dónde y a qué hora</h3>
+            <p>Nombre, dirección y si está abierto ahora. Nada más.</p>
+          </div>
+          <div class="card">
+            <span class="icon">3️⃣</span>
+            <h3>Tocá CÓMO LLEGAR</h3>
+            <p>Se abre el mapa de tu teléfono con el camino a pie.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
     <section>
-      <h2>Qué vas a encontrar</h2>
-      <div class="services">
+      <span class="overline">Qué vas a encontrar</span>
+      <h2>Seis necesidades, una sola pantalla</h2>
+      <div class="grid grid--services">
         <div class="svc"><span>🍞</span>Desayuno</div>
         <div class="svc"><span>🍲</span>Almuerzo</div>
         <div class="svc"><span>☕</span>Merienda</div>
@@ -123,85 +226,130 @@
         <div class="svc"><span>🛏️</span>Dónde dormir</div>
       </div>
     </section>
+  </div>
 
+  <div class="band">
+    <div class="wrap">
+      <section>
+        <span class="overline">Para todos</span>
+        <h2>Para quien lo necesita y para quien lo comparte</h2>
+        <div class="grid grid--two">
+          <div class="card">
+            <span class="icon"><i class="bi bi-qr-code"></i></span>
+            <h3>Escaneá y llevate la info</h3>
+            <p class="section-sub left">
+              Si la ves en una <strong>TV o cartel</strong> (comedor, centro comunitario,
+              plaza), cada lugar tiene su <strong>código QR</strong>: lo escaneás con la
+              cámara y ese lugar te queda <strong>guardado</strong> en tu teléfono,
+              con su horario y cómo llegar.
+            </p>
+          </div>
+          <div class="card">
+            <span class="icon"><i class="bi bi-tv"></i></span>
+            <h3>¿Tenés un comedor o centro?</h3>
+            <p class="section-sub left">
+              Funciona como <strong>cartel informativo</strong> que se actualiza solo,
+              con los turnos de comida del día. Y cargar lugares es tan simple que
+              lo puede hacer <strong>cualquier persona del equipo</strong>, sin
+              experiencia informática.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
     <section>
-      <h2>Escaneá y llevate la info</h2>
-      <p>
-        Si la ves en una <strong>TV o cartel</strong> (en un comedor, centro comunitario o plaza),
-        cada lugar tiene su <strong>código QR</strong>: lo escaneás con la cámara de tu teléfono
-        y ese lugar te queda <strong>guardado</strong> en tu aparato, con su horario y cómo llegar.
-      </p>
+      <span class="overline">Los principios</span>
+      <h2>Simple a propósito</h2>
+      <div class="grid grid--principles">
+        <div class="card">
+          <span class="icon"><i class="bi bi-gift"></i></span>
+          <h3>Gratis</h3>
+          <p>Hoy y siempre.</p>
+        </div>
+        <div class="card">
+          <span class="icon"><i class="bi bi-person-x"></i></span>
+          <h3>Sin registro</h3>
+          <p>No pedimos tus datos.</p>
+        </div>
+        <div class="card">
+          <span class="icon"><i class="bi bi-shield-check"></i></span>
+          <h3>Sin rastreadores</h3>
+          <p>Ni publicidad, ni perfiles.</p>
+        </div>
+        <div class="card">
+          <span class="icon"><i class="bi bi-universal-access"></i></span>
+          <h3>Accesible</h3>
+          <p>Celulares económicos y poca lectura.</p>
+        </div>
+      </div>
     </section>
+  </div>
 
+
+  <div class="wrap">
     <section>
-      <h2>¿Tenés un comedor o centro comunitario?</h2>
-      <ul class="tick">
-        <li><strong>Modo pantalla para TV</strong>: la app funciona como cartel informativo que se actualiza solo, con los turnos de comida del día.</li>
-        <li><strong>Cargar lugares es simple</strong>: nombre, dirección y horarios. Lo puede hacer una persona sin experiencia informática.</li>
-        <li><strong>Equipo por zonas</strong>: cada punto de la ciudad puede tener alguien que mantenga su información al día.</li>
-      </ul>
+      <span class="overline">Preguntas frecuentes</span>
+      <h2>Lo que suelen preguntar</h2>
+      <div class="faq">
+        <details>
+          <summary>¿Es gratis?</summary>
+          <p>Sí. Es una herramienta comunitaria, sin costo, sin publicidad y sin planes pagos para quien la usa.</p>
+        </details>
+        <details>
+          <summary>¿Tengo que registrarme o dar mis datos?</summary>
+          <p>No. No pedimos nombre, teléfono ni documento. Lo que guardás (tus lugares) queda solo en tu aparato.</p>
+        </details>
+        <details>
+          <summary>¿La información es oficial?</summary>
+          <p>No es un servicio del Estado: la información la cargan voluntarios de la comunidad y puede cambiar. Si un dato es importante, confirmalo en el lugar antes de ir.</p>
+        </details>
+        <details>
+          <summary>¿Y si un horario o una dirección está mal?</summary>
+          <p>Puede pasar: los horarios cambian. Avisanos desde el formulario de abajo y lo corregimos.</p>
+        </details>
+        <details>
+          <summary>¿Funciona sin internet?</summary>
+          <p>Si ya la usaste, la última información queda guardada en tu aparato y se ve aunque no tengas señal en ese momento.</p>
+        </details>
+      </div>
     </section>
+  </div>
 
-    <section>
-      <h2>Los principios</h2>
-      <ul class="tick">
-        <li><strong>Gratis</strong>, hoy y siempre.</li>
-        <li><strong>Sin registro</strong>: no pedimos tus datos.</li>
-        <li><strong>Sin publicidad y sin rastreadores.</strong></li>
-        <li><strong>Hecha para celulares económicos</strong> y para leerse fácil, incluso con poca lectura.</li>
-      </ul>
-    </section>
+  <div class="band">
+    <div class="wrap">
+      <section id="contacto">
+        <span class="overline">Contacto</span>
+        <h2>¿Dudas, correcciones o querés colaborar?</h2>
+        <p class="section-sub">Dejanos un mensaje. Si querés respuesta, poné tu mail o teléfono (opcional).</p>
+        <form id="contact-form" class="contact">
+          <label for="c-msg">Tu mensaje</label>
+          <textarea id="c-msg" name="message" rows="4" required
+            minlength="10" maxlength="2000"
+            placeholder="Dudas, correcciones, o cómo querés colaborar"></textarea>
 
-    <section>
-      <h2>Preguntas frecuentes</h2>
-      <details>
-        <summary>¿Es gratis?</summary>
-        <p>Sí. Es una herramienta comunitaria, sin costo, sin publicidad y sin planes pagos para quien la usa.</p>
-      </details>
-      <details>
-        <summary>¿Tengo que registrarme o dar mis datos?</summary>
-        <p>No. No pedimos nombre, teléfono ni documento. Lo que guardás (tus lugares) queda solo en tu aparato.</p>
-      </details>
-      <details>
-        <summary>¿La información es oficial?</summary>
-        <p>No es un servicio del Estado: la información la cargan voluntarios de la comunidad y puede cambiar. Si un dato es importante, confirmalo en el lugar antes de ir.</p>
-      </details>
-      <details>
-        <summary>¿Y si un horario o una dirección está mal?</summary>
-        <p>Puede pasar: los horarios cambian. Avisanos por el contacto de abajo y lo corregimos.</p>
-      </details>
-      <details>
-        <summary>¿Funciona sin internet?</summary>
-        <p>Si ya la usaste, la última información queda guardada en tu aparato y se ve aunque no tengas señal en ese momento.</p>
-      </details>
-    </section>
+          <label for="c-contact">¿Cómo te contactamos? (opcional)</label>
+          <input id="c-contact" name="contact" type="text"
+            placeholder="Mail o teléfono (opcional)" />
 
-    <section id="contacto">
-      <h2>¿Dudas, correcciones o querés colaborar?</h2>
-      <p>Dejanos un mensaje. Si querés respuesta, poné tu mail o teléfono (opcional).</p>
-      <form id="contact-form" class="contact">
-        <label for="c-msg">Tu mensaje</label>
-        <textarea id="c-msg" name="message" rows="4" required
-          minlength="10" maxlength="2000"
-          placeholder="Dudas, correcciones, o cómo querés colaborar"></textarea>
+          <label for="c-math">¿Cuánto es 2 + 3? (para evitar spam)</label>
+          <input id="c-math" name="math" type="text" inputmode="numeric"
+            autocomplete="off" required />
 
-        <label for="c-contact">¿Cómo te contactamos? (opcional)</label>
-        <input id="c-contact" name="contact" type="text"
-          placeholder="Mail o teléfono (opcional)" />
+          <!-- honeypot: invisible para personas; los bots lo llenan -->
+          <input name="website" type="text" aria-hidden="true" tabindex="-1"
+            autocomplete="off" style="position:absolute; left:-9999px; top:0;" />
 
-        <label for="c-math">¿Cuánto es 2 + 3? (para evitar spam)</label>
-        <input id="c-math" name="math" type="text" inputmode="numeric"
-          autocomplete="off" required />
+          <p class="contact-status" data-status aria-live="polite"></p>
+          <button class="btn" type="submit">ENVIAR MENSAJE</button>
+        </form>
+      </section>
+    </div>
+  </div>
 
-        <!-- honeypot: invisible para personas; los bots lo llenan -->
-        <input name="website" type="text" aria-hidden="true" tabindex="-1"
-          autocomplete="off" style="position:absolute; left:-9999px; top:0;" />
-
-        <p class="contact-status" data-status aria-live="polite"></p>
-        <button class="btn" type="submit">ENVIAR MENSAJE</button>
-      </form>
-    </section>
-
+  <div class="wrap">
     <footer>
       <p>
         <a href="./terminos.html">Términos de uso</a> ·
