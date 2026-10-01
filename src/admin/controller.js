@@ -99,10 +99,15 @@ export async function renderAdmin(sub = 'menu', param = null) {
         const stats = await getStats();
         paint(renderStats({ stats }));
       } catch (e) {
+        const msg = String(e?.message ?? e);
+        // La pista del SQL solo cuando el error es realmente de la base
+        const esDb = /does not exist|permission|denied|solo el dueno|page_views|schema/i.test(msg);
         paint(
           renderAdminMenu({
             user,
-            flash: `No se pudo cargar la estadística (${e?.message ?? e}). ¿Corriste analytics.sql en Supabase?`,
+            flash: `No se pudo cargar la estadística (${msg}).${
+              esDb ? ' ¿Corriste analytics.sql y analytics-v2.sql en Supabase?' : ''
+            }`,
           })
         );
       }

@@ -216,8 +216,29 @@ export function getShiftCandidates(shifts, now = new Date()) {
  * (siempre en hora de Argentina, GMT-3).
  */
 export function formatAR(dateInput, { withTime = true } = {}) {
-  const d = argentinaTime(dateInput instanceof Date ? dateInput : new Date(dateInput));
+  const parsed = parseDbDate(dateInput);
+  if (!parsed) return '—'; // fecha ilegible: no rompe la pantalla
+  const d = argentinaTime(parsed);
   const p = (n) => String(n).padStart(2, '0');
   const date = `${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}`;
   return withTime ? `${date} ${p(d.getHours())}:${p(d.getMinutes())}` : date;
+}
+
+/**
+ * Parsea fechas que vienen de la base (timestamptz con
+ * MICROSEGUNDOS: '2026-09-30T15:04:09.123456+00:00').
+ * Chrome y Safari rechazan fracciones de más de 3 dígitos
+ * (Invalid Date → 'Invalid time value'), así que se truncan
+ * a milisegundos. Devuelve Date válido o null (nunca rompe).
+ */
+export function parseDbDate(value) {
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+  let s = String(value ?? '').trim();
+  if (!s) return null;
+  s = s.replace(' ', 'T'); // '2026-09-30 15:04:09+00:00' → ISO
+  s = s.replace(/(\.\d{3})\d+/, '$1'); // microsegundos → milisegundos
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? null : d;
 }

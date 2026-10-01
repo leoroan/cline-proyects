@@ -2,7 +2,7 @@
    Uso: node tests/time.test.mjs */
 
 import assert from 'node:assert/strict';
-import { getServiceStatus, argentinaTime, getShiftState, getShiftCandidates, formatAR } from '../src/services/time.service.js';
+import { getServiceStatus, argentinaTime, getShiftState, getShiftCandidates, formatAR, parseDbDate } from '../src/services/time.service.js';
 import { MEAL_SHIFTS } from '../src/config/shifts.js';
 import { SERVICES } from '../src/config/services.js';
 import { MOCK_PLACES } from '../src/data/places.mock.js';
@@ -232,4 +232,16 @@ t('sin turnos → lista vacía', () => {
 t('formatAR: DD-MM-AAAA HH:mm en GMT-3', () => {
   assert.equal(formatAR('2024-06-03T15:04:09Z'), '03-06-2024 12:04');
   assert.equal(formatAR('2024-06-03T15:04:09Z', { withTime: false }), '03-06-2024');
+});
+
+t('formatAR con timestamps de Supabase (microsegundos)', () => {
+  assert.equal(formatAR('2026-09-30T15:04:09.123456+00:00'), '30-09-2026 12:04');
+  assert.equal(formatAR('2026-09-30 15:04:09.123456+00:00'), '30-09-2026 12:04');
+});
+
+t('formatAR con fecha ilegible → guion, no rompe', () => {
+  assert.equal(formatAR('esto no es fecha'), '—');
+  assert.equal(formatAR(null), '—');
+  assert.equal(parseDbDate('basura'), null);
+  assert.ok(parseDbDate('2026-09-30T15:04:09.123456+00:00') instanceof Date);
 });
