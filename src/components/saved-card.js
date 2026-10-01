@@ -54,7 +54,7 @@ export function savedCard({ place, now = new Date() }) {
           <i class="bi bi-geo-alt-fill" aria-hidden="true"></i> CÓMO LLEGAR
         </a>
         <button type="button" class="btn-save is-saved" data-save="${esc(place.id)}" aria-pressed="true">
-          <i class="bi bi-bookmark-check-fill" aria-hidden="true"></i> GUARDADO
+          <i class="bi bi-x-lg" aria-hidden="true"></i> QUITAR
         </button>
       </div>
     </div>

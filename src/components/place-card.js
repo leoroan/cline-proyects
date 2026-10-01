@@ -6,7 +6,7 @@
    (teléfono) → CÓMO LLEGAR. Nada más.
 
    Extras según el dispositivo:
-   - Botón GUARDAR (toggle): lo guarda en este teléfono.
+   - Botón GUARDAR / QUITAR: guarda (o saca) el lugar de este teléfono.
    - QR "escaneá y llevatelo": sólo visible en pantallas más
      grandes que un celular (lo maneja el CSS). En un celular
      no tiene sentido: no podés escanear tu propia pantalla.
@@ -67,7 +67,7 @@ export function placeCard({ place, status, distance = null, saved = false }) {
         <button type="button" class="btn-save${saved ? ' is-saved' : ''}"
           data-save="${esc(place.id)}" aria-pressed="${saved}">
           ${saved
-          ? '<i class="bi bi-bookmark-check-fill" aria-hidden="true"></i> GUARDADO'
+          ? '<i class="bi bi-x-lg" aria-hidden="true"></i> QUITAR'
           : '<i class="bi bi-bookmark-plus" aria-hidden="true"></i> GUARDAR'}
         </button>
       </div>

@@ -175,7 +175,7 @@ Pensado para el caso real: **la pantalla grande muestra, la persona se lo lleva*
 - En pantallas **más grandes que un celular** (modo pantalla/TV, y también PC o tablet), cada lugar muestra un **QR con el logo de la app**: "ESCANEAR" en el panel, "ESCANEÁ Y LLEVATELO" en las tarjetas.
 - Escanearlo abre `#/guardar/:id` en **el teléfono de la persona**: el lugar se guarda en `localStorage` (sin registro, sin cuenta, sin servidor) y aparece la confirmación al instante, con su CÓMO LLEGAR.
 - En la home se ve primero **⭐ MIS LUGARES** (lo guardado, con el estado de todos sus servicios) y después los servicios.
-- En celulares el QR no aparece (no podés escanear tu propia pantalla): en su lugar cada tarjeta tiene un botón **＋ GUARDAR**.
+- En celulares el QR no aparece (no podés escanear tu propia pantalla): en su lugar cada tarjeta tiene un botón **＋ GUARDAR** (y **✕ QUITAR** cuando ya está guardado — la acción siempre se lee clara).
 - **Auto-mantenible**: cada guardado vence a los **3 días**, la limpieza ocurre sola en cada lectura y hay un tope de 10 lugares. Si el storage está corrupto, se reinicia sin romper nada.
 - El QR se genera **localmente** (`src/vendor/qrcodegen.js`, Nayuki, MIT, vendored): funciona sin internet, ideal para TVs sin conexión.
 
