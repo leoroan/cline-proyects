@@ -534,3 +534,24 @@
 .field textarea.is-ok {
   border-color: var(--ok);
 }
+
+.stats-card__sub {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.stats-table th {
+  text-align: left;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  padding: 0.4rem 0.25rem;
+}
+
+.stats-table th:last-child,
+.stats-table th:nth-child(2) {
+  text-align: right;
+}

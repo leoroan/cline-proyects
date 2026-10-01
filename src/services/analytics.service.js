@@ -92,9 +92,10 @@ function artDateStr(date) {
 }
 
 export async function getStats() {
-  const [dailyRes, pathsRes, recentRes, totalRes, activeRes, inactiveRes, servicesRes, teamRes, visitorsRes, devicesRes, hoursRes] =
+  const [dailyRes, dailyPublicRes, pathsRes, recentRes, totalRes, activeRes, inactiveRes, servicesRes, teamRes, visitorsRes, devicesRes, hoursRes] =
     await Promise.all([
       sb().rpc('stats_daily', { days: 14 }),
+      sb().rpc('stats_daily', { days: 14, exclude_admin: true }),
       sb().rpc('stats_paths'),
       sb().rpc('stats_visitors', { days: 14 }),
       sb().rpc('stats_devices'),
@@ -117,15 +118,29 @@ export async function getStats() {
     day: String(r.day),
     views: Number(r.views),
   }));
-  const today = daily.find((d) => d.day === artDateStr(new Date()))?.views ?? 0;
+  const todayStr = artDateStr(new Date());
+  const today = daily.find((d) => d.day === todayStr)?.views ?? 0;
   const week = daily.slice(-7).reduce((acc, d) => acc + d.views, 0);
+
+  // Visitas PÚBLICAS (sin las de gestión) — la señal real de uso
+  const dailyPublic = (dailyPublicRes.data ?? []).map((r) => ({
+    day: String(r.day),
+    views: Number(r.views),
+  }));
+  const todayPublic = dailyPublic.find((d) => d.day === todayStr)?.views ?? 0;
+  const weekPublic = dailyPublic.slice(-7).reduce((acc, d) => acc + d.views, 0);
 
   const visitors = (visitorsRes.data ?? []).map((r) => ({
     day: String(r.day),
     visitors: Number(r.visitors),
   }));
-  const todayStr = artDateStr(new Date());
   const visitorsToday = visitors.find((d) => d.day === todayStr)?.visitors ?? 0;
+
+  // Por día: públicas vs gestión (para la tabla)
+  const dailySplit = daily.map((d) => {
+    const pub = dailyPublic.find((p) => p.day === d.day)?.views ?? 0;
+    return { day: d.day, publicas: pub, gestion: d.views - pub };
+  });
   const visitorsWeek = visitors.slice(-7).reduce((acc, d) => acc + d.visitors, 0);
 
   return {
@@ -138,6 +153,9 @@ export async function getStats() {
     places: { active: activeRes.count ?? 0, inactive: inactiveRes.count ?? 0 },
     customServices: servicesRes.count ?? 0,
     team: teamRes.count ?? 0,
+    todayPublic,
+    weekPublic,
+    dailySplit,
     visitorsToday,
     visitorsWeek,
     devices: (devicesRes.data ?? []).map((d) => ({

@@ -358,11 +358,16 @@ t('renderStats muestra visitantes, dispositivos y franjas horarias', () => {
       places: { active: 10, inactive: 2 },
       customServices: 1, team: 4,
       visitorsToday: 5, visitorsWeek: 30,
+      todayPublic: 2, weekPublic: 18,
+      dailySplit: [{ day: '2026-09-30', publicas: 2, gestion: 1 }],
       devices: [{ device: 'celular', views: 120 }, { device: 'pc/tv', views: 30 }],
       hours: [{ hour: 12, views: 40 }],
     },
   });
+  assert.match(html, /VISITAS HOY/);
   assert.match(html, /VISITANTES HOY/);
+  assert.match(html, /Públicas/);
+  assert.match(html, /gestión/);
   assert.match(html, /celular/);
   assert.match(html, /12:00 – 12:59/);
 });

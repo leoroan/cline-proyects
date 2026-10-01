@@ -28,6 +28,9 @@ export function renderStats({ stats }) {
     visitorsWeek = 0,
     devices = [],
     hours = [],
+    todayPublic = today,
+    weekPublic = week,
+    dailySplit = null,
   } = stats;
 
   return `
@@ -39,22 +42,26 @@ export function renderStats({ stats }) {
       <h2 class="page-title" id="contenido" tabindex="-1" data-focus>📊 Estadística</h2>
       <p class="admin-sub">
         Cuánto y cómo se usa la app. <strong>Solo la ves vos</strong> (el dueño).
+        Una <strong>visita</strong> = una pantalla vista (home, un servicio, el panel,
+        un QR guardado). Las de gestión (tus clics en #/admin) se cuentan aparte.
         Fechas en hora de Argentina (GMT-3).
       </p>
     </header>
 
     <div class="stats-cards">
       <div class="stats-card">
-        <p class="stats-card__num">${today}</p>
-        <p class="stats-card__label">HOY</p>
+        <p class="stats-card__num">${todayPublic}</p>
+        <p class="stats-card__label">VISITAS HOY</p>
+        <p class="stats-card__sub">+${today - todayPublic} gestión</p>
       </div>
       <div class="stats-card">
-        <p class="stats-card__num">${week}</p>
-        <p class="stats-card__label">ÚLTIMOS 7 DÍAS</p>
+        <p class="stats-card__num">${weekPublic}</p>
+        <p class="stats-card__label">VISITAS 7 DÍAS</p>
+        <p class="stats-card__sub">+${week - weekPublic} gestión</p>
       </div>
       <div class="stats-card">
         <p class="stats-card__num">${total}</p>
-        <p class="stats-card__label">TOTAL HISTÓRICO</p>
+        <p class="stats-card__label">VISITAS TOTALES</p>
       </div>
       <div class="stats-card">
         <p class="stats-card__num">${visitorsToday}</p>
@@ -78,15 +85,26 @@ export function renderStats({ stats }) {
     <section class="admin-panel">
       <h3 class="admin-panel__title">VISITAS POR DÍA (últimos 14 días)</h3>
       ${
-        daily.length
-          ? `<table class="stats-table"><tbody>
+        dailySplit && dailySplit.length
+          ? `<table class="stats-table">
+              <thead><tr><th>Día</th><th>Públicas</th><th>Gestión</th></tr></thead>
+              <tbody>
+              ${dailySplit
+                .map(
+                  (d) =>
+                    `<tr><td>${esc(dayLabel(d.day))}</td><td><strong>${d.publicas}</strong></td><td>${d.gestion}</td></tr>`
+                )
+                .join('')}
+              </tbody></table>`
+          : daily.length
+            ? `<table class="stats-table"><tbody>
               ${daily
                 .map(
                   (d) => `<tr><td>${esc(dayLabel(d.day))}</td><td><strong>${d.views}</strong></td></tr>`
                 )
                 .join('')}
             </tbody></table>`
-          : '<p class="field-hint">Todavía no hay visitas registradas.</p>'
+            : '<p class="field-hint">Todavía no hay visitas registradas.</p>'
       }
     </section>
 
