@@ -210,3 +210,14 @@ export function getShiftCandidates(shifts, now = new Date()) {
   }
   return result;
 }
+
+/**
+ * Formato corto argentino: 'DD-MM-AAAA' o 'DD-MM-AAAA HH:mm'
+ * (siempre en hora de Argentina, GMT-3).
+ */
+export function formatAR(dateInput, { withTime = true } = {}) {
+  const d = argentinaTime(dateInput instanceof Date ? dateInput : new Date(dateInput));
+  const p = (n) => String(n).padStart(2, '0');
+  const date = `${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}`;
+  return withTime ? `${date} ${p(d.getHours())}:${p(d.getMinutes())}` : date;
+}

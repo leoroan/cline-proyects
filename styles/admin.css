@@ -464,3 +464,73 @@
 .emoji-btn:active {
   border-color: var(--brand);
 }
+
+/* ---------- Estadística (solo dueño) ---------- */
+
+.stats-cards {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 34rem) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stats-card {
+  background: var(--card);
+  border: 0.16rem solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.2rem 1rem;
+  text-align: center;
+}
+
+.stats-card__num {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--brand);
+}
+
+.stats-card__label {
+  margin: 0.4rem 0 0;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stats-table td {
+  padding: 0.55rem 0.25rem;
+  border-top: 0.1rem solid var(--line);
+  font-size: 1.02rem;
+}
+
+.stats-table tr:first-child td {
+  border-top: 0;
+}
+
+.stats-table td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.stats-line {
+  margin: 0.4rem 0;
+  font-size: 1.05rem;
+}
+
+/* Feedback visible también en el input del link */
+.field input.is-ok,
+.field textarea.is-ok {
+  border-color: var(--ok);
+}

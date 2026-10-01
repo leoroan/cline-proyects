@@ -30,8 +30,10 @@ import {
   getBoardSettings,
   saveBoardSettings,
 } from './data.service.js';
-import { parseMapsLink } from './maps.js';
+import { parseMapsLink, isShortMapsLink } from './maps.js';
 import { renderAdminLogin, renderAdminMenu } from './views/login.js';
+import { renderStats } from './views/stats.js';
+import { getStats, isOwnerEmail } from '../services/analytics.service.js';
 import { renderAdminPlaces, renderPlaceForm } from './views/places.js';
 import {
   renderAdminServices,
@@ -88,6 +90,24 @@ export async function renderAdmin(sub = 'menu', param = null) {
     case 'pantalla':
       paint(renderAdminBoardSettings({ settings: getBoardSettings(), flash: f }));
       return;
+    case 'stats': {
+      if (!isOwnerEmail(user.u)) {
+        paint(renderAdminMenu({ user, flash: '⛔ Esa página es solo del dueño del proyecto.' }));
+        return;
+      }
+      try {
+        const stats = await getStats();
+        paint(renderStats({ stats }));
+      } catch (e) {
+        paint(
+          renderAdminMenu({
+            user,
+            flash: `No se pudo cargar la estadística (${e?.message ?? e}). ¿Corriste analytics.sql en Supabase?`,
+          })
+        );
+      }
+      return;
+    }
     case 'datos':
       paint(renderAdminData({ exportText: await exportData(), flash: f }));
       return;
@@ -161,22 +181,37 @@ export async function handleAdminClick(event) {
       const form = el.closest('form');
       const input = field?.querySelector('input[name="mapslink"]');
       const status = field?.querySelector('#maps-status');
-      const found = parseMapsLink(input?.value);
-      if (found && form) {
-        form.querySelector('input[name="lat"]').value = found.lat;
-        form.querySelector('input[name="lng"]').value = found.lng;
-        if (found.name) {
-          const addr = form.querySelector('input[name="address"]');
-          if (addr && !addr.value.trim()) addr.value = found.name;
+      try {
+        const raw = String(input?.value ?? '').trim();
+        const found = parseMapsLink(raw);
+        if (found && form) {
+          const latInput = form.querySelector('input[name="lat"]');
+          const lngInput = form.querySelector('input[name="lng"]');
+          if (latInput) latInput.value = found.lat;
+          if (lngInput) lngInput.value = found.lng;
+          if (found.name) {
+            const addr = form.querySelector('input[name="address"]');
+            if (addr && !addr.value.trim()) addr.value = found.name;
+          }
+          input?.classList.add('is-ok');
+          if (status) {
+            status.textContent = `✔ Ubicación encontrada: ${found.lat}, ${found.lng}. Ya quedó cargada en el formulario.`;
+            status.classList.add('is-ok');
+          }
+        } else if (status) {
+          input?.classList.remove('is-ok');
+          status.textContent = isShortMapsLink(raw)
+            ? 'Ese link corto no trae las coordenadas. Abrilo en el navegador, esperá que cargue el lugar y copiá la dirección LARGA de la barra. O usá USAR MI UBICACIÓN ACTUAL.'
+            : 'No entendí ese link. En Google Maps: Compartir → Copiar link, y pegalo completo.';
+          status.classList.remove('is-ok');
         }
+      } catch (err) {
+        console.error('parse-maps-link:', err);
         if (status) {
-          status.textContent = `✔ Ubicación encontrada (${found.lat}, ${found.lng}). Ya quedó cargada.`;
-          status.classList.add('is-ok');
+          status.textContent =
+            'Algo falló al leer el link. Probá de nuevo o escribí las coordenadas a mano (ej: -34.91, -57.95).';
+          status.classList.remove('is-ok');
         }
-      } else if (status) {
-        status.textContent =
-          'No entendí ese link. En Google Maps: Compartir → Copiar link, y pegalo completo.';
-        status.classList.remove('is-ok');
       }
       return true;
     }
@@ -232,7 +267,7 @@ async function handleAdminClickMore(el, action) {
     }
 
     case 'download-export': {
-      const blob = new Blob([exportData()], { type: 'application/json' });
+      const blob = new Blob([await exportData()], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'ayuda-cerca-datos.json';

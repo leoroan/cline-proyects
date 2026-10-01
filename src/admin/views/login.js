@@ -4,6 +4,7 @@
    ============================================================ */
 
 import { esc } from '../../utils/html.js';
+import { isOwnerEmail } from '../../services/analytics.service.js';
 
 export function renderAdminLogin({ error = null, username = '' } = {}) {
   return `
@@ -73,6 +74,13 @@ const MENU_ITEMS = [
   },
 ];
 
+const OWNER_ITEM = {
+  href: '#/admin/stats',
+  icon: 'bi-bar-chart-line',
+  title: 'ESTADÍSTICA',
+  desc: 'Cuánto y cómo se usa la app. Solo la ve el dueño.',
+};
+
 export function renderAdminMenu({ user, flash = null }) {
   return `
   <div class="page admin">
@@ -83,7 +91,10 @@ export function renderAdminMenu({ user, flash = null }) {
       ${flash ? `<p class="form-ok" role="status">${esc(flash)}</p>` : ''}
     </header>
     <nav class="admin-menu" aria-label="Opciones de gestión">
-      ${MENU_ITEMS.map(
+      ${(isOwnerEmail(user.u)
+        ? [...MENU_ITEMS.slice(0, 5), OWNER_ITEM, ...MENU_ITEMS.slice(5)]
+        : MENU_ITEMS
+      ).map(
         (i) => `
         <a class="admin-menu__item" href="${i.href}">
           <i class="bi ${i.icon} admin-menu__icon" aria-hidden="true"></i>

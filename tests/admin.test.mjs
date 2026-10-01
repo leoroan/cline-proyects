@@ -23,7 +23,9 @@ Object.defineProperty(globalThis, 'location', {
 
 const auth = await import('../src/admin/auth.service.js');
 const data = await import('../src/admin/data.service.js');
-const { parseMapsLink } = await import('../src/admin/maps.js');
+const { parseMapsLink, isShortMapsLink } = await import('../src/admin/maps.js');
+const { handleAdminClick } = await import('../src/admin/controller.js');
+const { renderStats } = await import('../src/admin/views/stats.js');
 const catalog = await import('../src/services/catalog.service.js');
 const { getPlaces } = await import('../src/services/places.service.js');
 
@@ -217,3 +219,112 @@ if (failed) {
 }
 console.log('\nTests de gestión OK ✔\n');
 
+
+console.log('\nLinks de Google Maps (formatos reales):');
+
+t('pin suelto /place/lat,lng', () => {
+  const r = parseMapsLink('https://www.google.com/maps/place/-34.9205,-57.9536');
+  assert.deepEqual([r.lat, r.lng], [-34.9205, -57.9536]);
+});
+
+t('parámetro ?ll=', () => {
+  const r = parseMapsLink('https://maps.google.com/?ll=-34.9205,-57.9536');
+  assert.deepEqual([r.lat, r.lng], [-34.9205, -57.9536]);
+});
+
+t('/search/ y /dir/ con coords', () => {
+  assert.deepEqual(
+    ((r) => [r.lat, r.lng])(parseMapsLink('https://www.google.com/maps/search/-34.92,-57.95')),
+    [-34.92, -57.95]
+  );
+  assert.deepEqual(
+    ((r) => [r.lat, r.lng])(parseMapsLink('https://www.google.com/maps/dir/-34.92,-57.95')),
+    [-34.92, -57.95]
+  );
+});
+
+t('coordenadas no se toman como nombre', () => {
+  const r = parseMapsLink('https://www.google.com/maps/place/-34.9205,-57.9536');
+  assert.equal(r.name, null);
+});
+
+t('link corto detectado', () => {
+  assert.equal(isShortMapsLink('https://maps.app.goo.gl/AbCd123'), true);
+  assert.equal(isShortMapsLink('https://goo.gl/maps/xyz'), true);
+  assert.equal(isShortMapsLink('https://www.google.com/maps/place/X/@-34.9,-57.9,17z/'), false);
+});
+
+console.log('\nBotón USAR ESTE LINK (flujo completo):');
+
+function fakeMapsDom(link) {
+  const latInput = { value: '' };
+  const lngInput = { value: '' };
+  const addrInput = { value: '' };
+  const mapsInput = { value: link, classList: { add() {}, remove() {} } };
+  const classes = new Set();
+  const status = {
+    textContent: '',
+    classList: { add: (c) => classes.add(c), remove: (c) => classes.delete(c) },
+    has: (c) => classes.has(c),
+  };
+  const form = {
+    querySelector: (sel) =>
+      sel.includes('lat') && !sel.includes('lng') ? latInput
+      : sel.includes('lng') ? lngInput
+      : sel.includes('address') ? addrInput
+      : null,
+  };
+  const field = {
+    querySelector: (sel) =>
+      sel.includes('mapslink') ? mapsInput : sel.includes('maps-status') ? status : null,
+  };
+  const el = {
+    dataset: { action: 'parse-maps-link' },
+    closest: (sel) => (sel === '.field' ? field : sel === 'form' ? form : null),
+  };
+  return { el, latInput, lngInput, status };
+}
+
+await ta('link válido → carga lat/lng y avisa en verde', async () => {
+  const dom = fakeMapsDom('https://www.google.com/maps/place/Obelisco/@-34.6037,-58.3816,17z/');
+  const handled = await handleAdminClick({ target: { closest: () => dom.el } });
+  assert.equal(handled, true);
+  assert.equal(dom.latInput.value, -34.6037);
+  assert.equal(dom.lngInput.value, -58.3816);
+  assert.match(dom.status.textContent, /Ubicación encontrada/);
+  assert.ok(dom.status.has('is-ok'));
+});
+
+await ta('link corto → aviso específico (abrir y copiar el largo)', async () => {
+  const dom = fakeMapsDom('https://maps.app.goo.gl/abc123');
+  await handleAdminClick({ target: { closest: () => dom.el } });
+  assert.match(dom.status.textContent, /link corto/);
+});
+
+await ta('texto basura → aviso genérico, nada se rompe', async () => {
+  const dom = fakeMapsDom('cualquier cosa');
+  await handleAdminClick({ target: { closest: () => dom.el } });
+  assert.match(dom.status.textContent, /No entendí/);
+});
+
+console.log('\nEstadística (vista):');
+
+t('renderStats muestra tarjetas, días DD-MM-AAAA y rutas', () => {
+  const html = renderStats({
+    stats: {
+      today: 3,
+      week: 21,
+      total: 150,
+      daily: [{ day: '2026-09-30', views: 3 }],
+      paths: [{ path: 'home', views: 80 }],
+      recent: [{ path: 'panel', created_at: '2026-09-30T15:04:00Z' }],
+      places: { active: 10, inactive: 2 },
+      customServices: 1,
+      team: 4,
+    },
+  });
+  assert.match(html, /HOY/);
+  assert.match(html, /30-09-2026/); // día en formato DD-MM-AAAA
+  assert.match(html, /30-09-2026 12:04/); // visita en DD-MM-AAAA HH:mm GMT-3
+  assert.match(html, /10 activos/);
+});

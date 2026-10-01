@@ -2,7 +2,7 @@
    Uso: node tests/time.test.mjs */
 
 import assert from 'node:assert/strict';
-import { getServiceStatus, argentinaTime, getShiftState, getShiftCandidates } from '../src/services/time.service.js';
+import { getServiceStatus, argentinaTime, getShiftState, getShiftCandidates, formatAR } from '../src/services/time.service.js';
 import { MEAL_SHIFTS } from '../src/config/shifts.js';
 import { SERVICES } from '../src/config/services.js';
 import { MOCK_PLACES } from '../src/data/places.mock.js';
@@ -227,4 +227,9 @@ t('23:00 → todos los turnos son MAÑANA', () => {
 t('sin turnos → lista vacía', () => {
   assert.deepEqual(getShiftCandidates([], new Date()), []);
   assert.deepEqual(getShiftCandidates(undefined, new Date()), []);
+});
+
+t('formatAR: DD-MM-AAAA HH:mm en GMT-3', () => {
+  assert.equal(formatAR('2024-06-03T15:04:09Z'), '03-06-2024 12:04');
+  assert.equal(formatAR('2024-06-03T15:04:09Z', { withTime: false }), '03-06-2024');
 });

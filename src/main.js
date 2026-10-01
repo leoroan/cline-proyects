@@ -31,6 +31,7 @@ import {
 } from './services/geo.service.js';
 import { getSavedIds, isSaved, save, remove } from './services/saved.service.js';
 import { getBoardSettings } from './admin/data.service.js';
+import { track } from './services/analytics.service.js';
 import { parseRoute } from './router.js';
 import { paint } from './utils/dom.js';
 import { renderHome } from './views/home.view.js';
@@ -350,10 +351,26 @@ function leaveBoardMode() {
   }
 }
 
+function routePath(route) {
+  switch (route.name) {
+    case 'results':
+      return `s/${route.serviceId}`;
+    case 'save':
+      return `guardar/${route.placeId}`;
+    case 'board':
+      return 'panel';
+    case 'admin':
+      return `admin/${route.sub}`;
+    default:
+      return 'home';
+  }
+}
+
 async function render() {
   const route = parseRoute();
   if (route === null) return; // ancla interna (skip link): no es navegación
 
+  track(routePath(route)); // visita (fire & forget, nunca bloquea)
   leaveBoardMode();
   window.scrollTo(0, 0);
 
@@ -367,9 +384,18 @@ async function render() {
 /* ---------- Eventos ---------- */
 
 // Clicks: primero gestión (data-action), después GUARDAR (data-save).
+// (target robusto: en browsers viejos el target puede ser un nodo de texto)
+function clickTarget(event) {
+  const raw = event.target;
+  return typeof Element !== 'undefined' && raw instanceof Element
+    ? raw
+    : raw?.parentElement ?? null;
+}
+
 app.addEventListener('click', async (event) => {
-  if (await handleAdminClick(event)) return;
-  const btn = event.target.closest('[data-save]');
+  const safeEvent = { ...event, target: clickTarget(event) };
+  if (await handleAdminClick(safeEvent)) return;
+  const btn = clickTarget(event)?.closest?.('[data-save]');
   if (!btn) return;
   const id = btn.getAttribute('data-save');
   if (isSaved(id)) remove(id);

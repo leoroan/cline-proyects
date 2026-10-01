@@ -38,7 +38,15 @@ Dashboard → **Edge Functions** → *New function* → nombre: `manage-collabor
 > Sin este paso, la pantalla 👥 EQUIPO no puede crear usuarios (el resto
 > de la gestión —lugares y secciones— funciona igual).
 
-## 5️⃣ Avisar
+## 5️⃣ (Opcional) Estadística para el dueño
+
+Otra *New query* → pegar [`analytics.sql`](./analytics.sql) → **Run**.
+
+Crea la tabla `page_views` y las funciones de estadística. La app registra
+visitas sola (rutas vistas); la página 📊 ESTADÍSTICA en `#/admin` la ve
+**solo el dueño** (`leoroan@gmail.com`, por RLS).
+
+## 6️⃣ Avisar
 
 Con eso listo, el frontend se conecta solo (la URL y la publishable key ya
 están en el código: son públicas por diseño; la seguridad la da RLS).

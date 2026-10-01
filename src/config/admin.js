@@ -16,3 +16,8 @@
 export const ADMIN_USERS = [
   { username: 'admin', password: 'comedor2024', name: 'Coordinación' },
 ];
+
+/* Email de la persona DUEÑA del proyecto: es la única que ve la
+   página de estadística (#/admin/stats). También está fijado en
+   supabase/analytics.sql (RLS). Si cambia el dueño, cambiar ambos. */
+export const OWNER_EMAIL = 'leoroan@gmail.com';

@@ -216,6 +216,12 @@ La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin 
 - Tipografía y grillas fluidas que se adaptan solas a cualquier viewport (ver "Responsive").
 
 
+## 📊 Estadística (solo dueño)
+
+- La app registra visitas por ruta (`home`, `s/lunch`, `panel`, `guardar/:id`, `admin/…`) en la tabla `page_views` — fire & forget, con anti-ruido (misma ruta < 60 s = 1 visita), nunca bloquea.
+- `#/admin/stats`: visible **solo para el dueño** (`leoroan@gmail.com`): visitas HOY / 7 días / total, por día (últimos 14, formato DD-MM-AAAA GMT-3), rutas más vistas, últimas 10 visitas con hora, y resumen del sitio (lugares, secciones, equipo). Sirve para decidir si el proyecto tiene uso y si vale pagar Supabase.
+- Seguridad real en la base: RLS + funciones que verifican el email (`supabase/analytics.sql`). Aunque un colaborador llegue a la URL, no ve nada.
+
 ## ☁️ Supabase (nube) — cómo está conectado
 
 - **Cliente vendored** (`vendor/supabase/supabase.js`, UMD oficial): browser-direct a PostgREST + Auth, sin backend propio.
