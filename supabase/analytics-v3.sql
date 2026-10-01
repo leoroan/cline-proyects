@@ -7,6 +7,12 @@
 -- Dashboard → SQL Editor → New query → pegar TODO → Run.
 -- ============================================================
 
+-- IMPORTANTE: primero se elimina la firma VIEJA (1 parámetro,
+-- la de analytics.sql). Si convive con la nueva, Postgres no puede
+-- elegir entre ambas y falla con 'Could not choose the best
+-- candidate function'.
+drop function if exists public.stats_daily(int);
+
 create or replace function public.stats_daily(
   days int default 14,
   exclude_admin boolean default false
