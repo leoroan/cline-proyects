@@ -141,3 +141,11 @@ t('contacto.js carga como MÓDULO (el export requiere type="module")', async () 
   const tos = await readFile(new URL('../guia/terminos.html', import.meta.url), 'utf-8');
   assert.match(tos, /type="module" src="\.\/contacto\.js"/);
 });
+
+t('guía sin íconos bi huérfanos (no carga la fuente de iconos)', async () => {
+  const landing = await readFile(new URL('../guia/index.html', import.meta.url), 'utf-8');
+  assert.ok(!landing.includes('bootstrap-icons.css'), 'si carga la fuente, borrar este test');
+  assert.ok(!landing.includes('class="bi '), 'bi sin fuente = icono invisible');
+  const tos = await readFile(new URL('../guia/terminos.html', import.meta.url), 'utf-8');
+  assert.ok(!tos.includes('class="bi '));
+});
