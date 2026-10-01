@@ -92,24 +92,26 @@ function artDateStr(date) {
 }
 
 export async function getStats() {
+  // ORDEN CANÓNICO: el destructuring sigue EXACTAMENTE este orden.
+  // (Cualquier query nueva va SIEMPRE al final, con su nombre al final.)
   const [dailyRes, dailyPublicRes, pathsRes, recentRes, totalRes, activeRes, inactiveRes, servicesRes, teamRes, visitorsRes, devicesRes, hoursRes] =
     await Promise.all([
-      sb().rpc('stats_daily', { days: 14 }),
-      sb().rpc('stats_daily', { days: 14, exclude_admin: true }),
-      sb().rpc('stats_paths'),
-      sb().rpc('stats_visitors', { days: 14 }),
-      sb().rpc('stats_devices'),
-      sb().rpc('stats_hours'),
-      sb()
+      sb().rpc('stats_daily', { days: 14 }),                    //  1 dailyRes
+      sb().rpc('stats_daily', { days: 14, exclude_admin: true }), //  2 dailyPublicRes
+      sb().rpc('stats_paths'),                                   //  3 pathsRes
+      sb()                                                       //  4 recentRes
         .from('page_views')
         .select('path, created_at')
         .order('created_at', { ascending: false })
         .limit(10),
-      sb().from('page_views').select('*', { count: 'exact', head: true }),
-      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', true),
-      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', false),
-      sb().from('custom_services').select('*', { count: 'exact', head: true }),
-      sb().from('profiles').select('*', { count: 'exact', head: true }),
+      sb().from('page_views').select('*', { count: 'exact', head: true }), //  5 totalRes
+      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', true),  //  6 activeRes
+      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', false), //  7 inactiveRes
+      sb().from('custom_services').select('*', { count: 'exact', head: true }), //  8 servicesRes
+      sb().from('profiles').select('*', { count: 'exact', head: true }),        //  9 teamRes
+      sb().rpc('stats_visitors', { days: 14 }),                  // 10 visitorsRes
+      sb().rpc('stats_devices'),                                 // 11 devicesRes
+      sb().rpc('stats_hours'),                                   // 12 hoursRes
     ]);
 
   if (dailyRes.error) throw new Error(dailyRes.error.message);
