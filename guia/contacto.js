@@ -58,6 +58,41 @@ async function sendMessage({ message, contact, website }) {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
+/* ---------- Estadística de la guía (insert directo, sin librerías) ---------- */
+
+function deviceClassSimple() {
+  try {
+    const w = window.innerWidth ?? 0;
+    if (w >= 1200) return 'pc/tv';
+    if (w >= 700) return 'tablet';
+    return 'celular';
+  } catch {
+    return 'celular';
+  }
+}
+
+function trackStaticPage(path) {
+  try {
+    fetch(`${SUPABASE_URL}/rest/v1/page_views`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({
+        path,
+        device: deviceClassSimple(),
+        visitor: visitorId(),
+        actor: 'publico',
+      }),
+    }).catch(() => {});
+  } catch {
+    /* nunca molesta a la página */
+  }
+}
+
 /* ---------- UI (solo si existe el formulario en la página) ---------- */
 
 if (typeof document !== 'undefined') {
@@ -103,4 +138,15 @@ if (typeof document !== 'undefined') {
       }
     });
   }
+}
+
+// Registrar la visita de esta página (guia o guia/terminos)
+try {
+  if (typeof location !== 'undefined') {
+    trackStaticPage(
+      /terminos\.html$/.test(location.pathname) ? 'guia/terminos' : 'guia'
+    );
+  }
+} catch {
+  /* nada */
 }

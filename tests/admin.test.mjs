@@ -327,6 +327,7 @@ t('renderStats muestra tarjetas, días DD-MM-AAAA y rutas', () => {
   assert.match(html, /30-09-2026/); // día en formato DD-MM-AAAA
   assert.match(html, /30-09-2026 12:04/); // visita en DD-MM-AAAA HH:mm GMT-3
   assert.match(html, /10 activos/);
+  assert.match(html, /Mensajes sin leer/);
 });
 
 console.log('\nAnalytics enriquecido:');
@@ -357,6 +358,7 @@ t('renderStats muestra visitantes, dispositivos y franjas horarias', () => {
       recent: [{ path: 'panel', created_at: '2026-09-30T15:04:00Z' }],
       places: { active: 10, inactive: 2 },
       customServices: 1, team: 4,
+      unreadMessages: 1,
       visitorsToday: 5, visitorsWeek: 30,
       todayPublic: 2, weekPublic: 18, todayDueno: 1, todayEquipo: 2, weekDueno: 3, weekEquipo: 4,
       dailySplit: [{ day: '2026-09-30', publicas: 2, dueno: 1, equipo: 1 }],

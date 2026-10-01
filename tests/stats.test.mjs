@@ -15,7 +15,7 @@ Object.defineProperty(globalThis, 'localStorage', {
 });
 
 /* Cliente falso: counts conocidos por tabla + rpcs etiquetados */
-const COUNTS = { page_views: 78, places: 13, custom_services: 5, profiles: 2 };
+const COUNTS = { page_views: 78, places: 13, custom_services: 5, profiles: 2, contact_messages: 2 };
 
 function makeQuery(table) {
   const q = {
@@ -127,6 +127,10 @@ t('rutas, dispositivos y horarios mapeados', () => {
 
 t('recientes llegan con su fecha', () => {
   assert.equal(stats.recent[0].path, 'home');
+});
+
+t('mensajes sin leer salen de contact_messages (read=false)', () => {
+  assert.equal(stats.unreadMessages, 2);
 });
 
 if (failed) {

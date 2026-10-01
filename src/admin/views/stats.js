@@ -85,6 +85,8 @@ export function renderStats({ stats }) {
       <p class="stats-line">🧩 Secciones: <strong>${SERVICES.length + customServices}</strong>
         (${customServices} creadas por el equipo)</p>
       <p class="stats-line">👥 Equipo: <strong>${team}</strong> personas</p>
+      <p class="stats-line">📨 Mensajes sin leer: <strong>${stats.unreadMessages ?? 0}</strong>
+        · <a href="#/admin/mensajes">abrir 📨 MENSAJES</a></p>
     </section>
 
     <section class="admin-panel">

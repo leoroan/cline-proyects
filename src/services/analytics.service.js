@@ -108,7 +108,7 @@ function artDateStr(date) {
 export async function getStats() {
   // ORDEN CANÓNICO: el destructuring sigue EXACTAMENTE este orden.
   // (Cualquier query nueva va SIEMPRE al final, con su nombre al final.)
-  const [dailyRes, pathsRes, recentRes, totalRes, activeRes, inactiveRes, servicesRes, teamRes, visitorsRes, devicesRes, hoursRes] =
+  const [dailyRes, pathsRes, recentRes, totalRes, activeRes, inactiveRes, servicesRes, teamRes, visitorsRes, devicesRes, hoursRes, unreadMessagesRes] =
     await Promise.all([
       sb().rpc('stats_daily', { days: 14 }),                    //  1 dailyRes (publicas/dueno/equipo)
       sb().rpc('stats_paths'),                                   //  2 pathsRes
@@ -125,6 +125,7 @@ export async function getStats() {
       sb().rpc('stats_visitors', { days: 14 }),                  //  9 visitorsRes
       sb().rpc('stats_devices'),                                 // 10 devicesRes
       sb().rpc('stats_hours'),                                   // 11 hoursRes
+      sb().from('contact_messages').select('*', { count: 'exact', head: true }).eq('read', false), // 12 unreadMessagesRes
     ]);
 
   if (dailyRes.error) throw new Error(dailyRes.error.message);
@@ -187,5 +188,6 @@ export async function getStats() {
       hour: Number(h.hour),
       views: Number(h.views),
     })),
+    unreadMessages: unreadMessagesRes.count ?? 0,
   };
 }
