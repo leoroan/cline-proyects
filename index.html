@@ -3,31 +3,87 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ayuda Cerca — Comida, ropa y dónde dormir cerca tuyo</title>
+  <meta name="description" content="Punto de información comunitario: dónde desayunar, almorzar, merendar, cenar, conseguir ropa y dónde dormir. Gratis, simple y actualizado. Funciona en cualquier celular, tablet, PC o TV." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://myselfproductions.me/cline-proyects/" />
   <meta name="theme-color" content="#faf6ef" />
   <meta name="color-scheme" content="light" />
-  <meta name="description" content="Dónde conseguir comida, ropa y un lugar para dormir. Información comunitaria simple, directa y actualizada." />
-  <title>Ayuda Cerca — Comida, ropa y dónde dormir</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍲</text></svg>" />
-  <link rel="stylesheet" href="./vendor/bootstrap/bootstrap.min.css?v=0.3.1" />
-  <link rel="stylesheet" href="./vendor/bootstrap-icons/bootstrap-icons.css?v=0.3.1" />
-  <link rel="stylesheet" href="./styles/fonts.css?v=0.3.1" />
-  <link rel="stylesheet" href="./styles/tokens.css?v=0.3.1" />
-  <link rel="stylesheet" href="./styles/base.css?v=0.3.1" />
-  <link rel="stylesheet" href="./styles/components.css?v=0.3.1" />
-  <link rel="stylesheet" href="./styles/board.css?v=0.3.1" />
-  <link rel="stylesheet" href="./styles/admin.css?v=0.3.1" />
+
+  <!-- Compartir (WhatsApp, Telegram, redes): la tarjeta que se ve al pegar el link -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Ayuda Cerca" />
+  <meta property="og:title" content="Ayuda Cerca — Comida, ropa y dónde dormir cerca tuyo" />
+  <meta property="og:description" content="¿Dónde puedo comer hoy? ¿Dónde dan ropa? ¿Dónde puedo dormir? Información comunitaria simple, al instante, desde cualquier celular." />
+  <meta property="og:url" content="https://myselfproductions.me/cline-proyects/" />
+  <meta property="og:image" content="https://myselfproductions.me/cline-proyects/assets/og-card.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Datos estructurados para buscadores -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Ayuda Cerca",
+    "url": "https://myselfproductions.me/cline-proyects/",
+    "description": "Punto de información comunitario: dónde conseguir desayuno, almuerzo, merienda, cena, ropa y un lugar para dormir.",
+    "applicationCategory": "LifestyleApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "es",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": 0, "priceCurrency": "ARS" }
+  }
+  </script>
+
+  <!-- Rendimiento: fuente principal precargada + preconexión a la nube -->
+  <link rel="preload" href="./vendor/fonts/nunito/nunito-latin-800-normal.woff2?v=0.3.2" as="font" type="font/woff2" crossorigin />
+  <link rel="preconnect" href="https://bpvfgyxwdjroxypbmejy.supabase.co" />
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./assets/icon.svg" />
+
+  <link rel="stylesheet" href="./vendor/bootstrap/bootstrap.min.css?v=0.3.2" />
+  <link rel="stylesheet" href="./vendor/bootstrap-icons/bootstrap-icons.css?v=0.3.2" />
+  <link rel="stylesheet" href="./styles/fonts.css?v=0.3.2" />
+  <link rel="stylesheet" href="./styles/tokens.css?v=0.3.2" />
+  <link rel="stylesheet" href="./styles/base.css?v=0.3.2" />
+  <link rel="stylesheet" href="./styles/components.css?v=0.3.2" />
+  <link rel="stylesheet" href="./styles/board.css?v=0.3.2" />
+  <link rel="stylesheet" href="./styles/admin.css?v=0.3.2" />
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <div id="app">
-    <noscript>
-      <p style="padding: 1.5rem; font-size: 1.2rem;">
-        Esta herramienta necesita JavaScript para funcionar.
+    <!-- Contenido estático: lo leen buscadores (y usuarios sin JS).
+         La app lo reemplaza al primer render. -->
+    <main style="max-width: 42rem; margin-inline: auto; padding: 2rem 1.25rem; font-family: system-ui, sans-serif; line-height: 1.5; color: #1c1712;">
+      <h1>Ayuda Cerca — ¿Qué necesitás?</h1>
+      <p>
+        Información comunitaria simple y al instante: dónde <strong>desayunar</strong>,
+        <strong>almorzar</strong>, <strong>merendar</strong> y <strong>cenar</strong>,
+        dónde entregan <strong>ropa</strong> y dónde hay un
+        <strong>lugar para dormir</strong>.
       </p>
-    </noscript>
+      <p>
+        Gratis, sin registro y pensada para usar en cualquier celular, tablet,
+        PC o TV (también como cartel informativo para comedores y centros comunitarios).
+      </p>
+      <ul>
+        <li>🍞 Desayuno</li>
+        <li>🍲 Almuerzo</li>
+        <li>☕ Merienda</li>
+        <li>🍽️ Cena</li>
+        <li>👕 Ropa</li>
+        <li>🛏️ Dónde dormir</li>
+      </ul>
+      <noscript>
+        <p><strong>Esta herramienta necesita JavaScript para funcionar.</strong></p>
+      </noscript>
+    </main>
   </div>
-  <script defer src="./vendor/supabase/supabase.js?v=0.3.1"></script>
-  <script defer src="./vendor/bootstrap/bootstrap.bundle.min.js?v=0.3.1"></script>
-  <script type="module" src="./src/main.js?v=0.3.1"></script>
+  <script defer src="./vendor/supabase/supabase.js?v=0.3.2"></script>
+  <script defer src="./vendor/bootstrap/bootstrap.bundle.min.js?v=0.3.2"></script>
+  <script type="module" src="./src/main.js?v=0.3.2"></script>
 </body>
 </html>

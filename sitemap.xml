@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- SPA: una sola URL real (el resto son rutas hash de la misma app) -->
+  <url>
+    <loc>https://myselfproductions.me/cline-proyects/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

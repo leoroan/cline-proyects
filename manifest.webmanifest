@@ -1,0 +1,20 @@
+{
+  "name": "Ayuda Cerca — Comida, ropa y dónde dormir",
+  "short_name": "Ayuda Cerca",
+  "description": "Punto de información comunitario: dónde conseguir comida, ropa y un lugar para dormir. Simple, gratis, al instante.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#faf6ef",
+  "theme_color": "#8a3300",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
