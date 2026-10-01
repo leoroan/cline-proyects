@@ -470,13 +470,13 @@
 .stats-cards {
   display: grid;
   gap: var(--gap);
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   margin-bottom: 1.5rem;
 }
 
 @media (max-width: 34rem) {
   .stats-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

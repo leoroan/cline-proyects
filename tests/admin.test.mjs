@@ -328,3 +328,41 @@ t('renderStats muestra tarjetas, días DD-MM-AAAA y rutas', () => {
   assert.match(html, /30-09-2026 12:04/); // visita en DD-MM-AAAA HH:mm GMT-3
   assert.match(html, /10 activos/);
 });
+
+console.log('\nAnalytics enriquecido:');
+
+const { deviceClass, visitorId } = await import('../src/services/analytics.service.js');
+
+t('deviceClass: celular / tablet / pc-tv', () => {
+  assert.equal(deviceClass({ width: 390, ua: 'Mozilla iPhone' }), 'celular');
+  assert.equal(deviceClass({ width: 820, ua: 'iPad' }), 'tablet');
+  assert.equal(deviceClass({ width: 1920, ua: 'Mozilla' }), 'pc/tv');
+  assert.equal(deviceClass({ width: 500, ua: 'Tizen TV' }), 'pc/tv');
+});
+
+t('visitorId: estable, anónimo y persistente', () => {
+  const a = visitorId();
+  const b = visitorId();
+  assert.equal(a, b);            // mismo navegador → mismo id
+  assert.ok(a.length >= 8);
+  assert.ok(!a.includes('@'));   // nada personal
+});
+
+t('renderStats muestra visitantes, dispositivos y franjas horarias', () => {
+  const html = renderStats({
+    stats: {
+      today: 3, week: 21, total: 150,
+      daily: [{ day: '2026-09-30', views: 3 }],
+      paths: [{ path: 'home', views: 80 }],
+      recent: [{ path: 'panel', created_at: '2026-09-30T15:04:00Z' }],
+      places: { active: 10, inactive: 2 },
+      customServices: 1, team: 4,
+      visitorsToday: 5, visitorsWeek: 30,
+      devices: [{ device: 'celular', views: 120 }, { device: 'pc/tv', views: 30 }],
+      hours: [{ hour: 12, views: 40 }],
+    },
+  });
+  assert.match(html, /VISITANTES HOY/);
+  assert.match(html, /celular/);
+  assert.match(html, /12:00 – 12:59/);
+});

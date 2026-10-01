@@ -220,7 +220,9 @@ La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin 
 
 - La app registra visitas por ruta (`home`, `s/lunch`, `panel`, `guardar/:id`, `admin/…`) en la tabla `page_views` — fire & forget, con anti-ruido (misma ruta < 60 s = 1 visita), nunca bloquea.
 - `#/admin/stats`: visible **solo para el dueño** (`leoroan@gmail.com`): visitas HOY / 7 días / total, por día (últimos 14, formato DD-MM-AAAA GMT-3), rutas más vistas, últimas 10 visitas con hora, y resumen del sitio (lugares, secciones, equipo). Sirve para decidir si el proyecto tiene uso y si vale pagar Supabase.
-- Seguridad real en la base: RLS + funciones que verifican el email (`supabase/analytics.sql`). Aunque un colaborador llegue a la URL, no ve nada.
+- **Datos enriquecidos (first-party, sin librerías de tracking)**: tipo de dispositivo (celular/tablet/pc-tv), visitante anónimo único (id en localStorage, sin nada personal) y franjas horarias. Decisión a propósito: NO Google Analytics/Plausible/etc. — rastrean personas en situación vulnerable, los bloquean ad-blockers (peor calidad) y rompen el modo offline. Acá nadie bloquea nada y no se guarda nada personal.
+- Seguridad real en la base: RLS + funciones que verifican el email (`supabase/analytics.sql` + `analytics-v2.sql`). Aunque un colaborador llegue a la URL, no ve nada.
+- Para la decisión de pagar Supabase: además de esta página, Project → Reports en el dashboard de Supabase muestra uso de DB y API gratis.
 
 ## ☁️ Supabase (nube) — cómo está conectado
 

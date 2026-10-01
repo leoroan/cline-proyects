@@ -14,7 +14,21 @@ function dayLabel(ymd) {
 }
 
 export function renderStats({ stats }) {
-  const { today, week, total, daily, paths, recent, places, customServices, team } = stats;
+  const {
+    today,
+    week,
+    total,
+    daily,
+    paths,
+    recent,
+    places,
+    customServices,
+    team,
+    visitorsToday = 0,
+    visitorsWeek = 0,
+    devices = [],
+    hours = [],
+  } = stats;
 
   return `
   <div class="page admin">
@@ -41,6 +55,14 @@ export function renderStats({ stats }) {
       <div class="stats-card">
         <p class="stats-card__num">${total}</p>
         <p class="stats-card__label">TOTAL HISTÓRICO</p>
+      </div>
+      <div class="stats-card">
+        <p class="stats-card__num">${visitorsToday}</p>
+        <p class="stats-card__label">VISITANTES HOY</p>
+      </div>
+      <div class="stats-card">
+        <p class="stats-card__num">${visitorsWeek}</p>
+        <p class="stats-card__label">VISITANTES 7 DÍAS</p>
       </div>
     </div>
 
@@ -76,6 +98,37 @@ export function renderStats({ stats }) {
               ${paths
                 .map(
                   (p) => `<tr><td>${esc(p.path)}</td><td><strong>${p.views}</strong></td></tr>`
+                )
+                .join('')}
+            </tbody></table>`
+          : '<p class="field-hint">Sin datos todavía.</p>'
+      }
+    </section>
+
+    <section class="admin-panel">
+      <h3 class="admin-panel__title">¿DESDE QUÉ ENTRAN?</h3>
+      ${
+        devices.length
+          ? `<table class="stats-table"><tbody>
+              ${devices
+                .map(
+                  (d) => `<tr><td>${esc(d.device)}</td><td><strong>${d.views}</strong></td></tr>`
+                )
+                .join('')}
+            </tbody></table>`
+          : '<p class="field-hint">Sin datos todavía.</p>'
+      }
+    </section>
+
+    <section class="admin-panel">
+      <h3 class="admin-panel__title">¿A QUÉ HORA ENTRAN? (GMT-3)</h3>
+      ${
+        hours.length
+          ? `<table class="stats-table"><tbody>
+              ${hours
+                .map(
+                  (h) =>
+                    `<tr><td>${String(h.hour).padStart(2, '0')}:00 – ${String(h.hour).padStart(2, '0')}:59</td><td><strong>${h.views}</strong></td></tr>`
                 )
                 .join('')}
             </tbody></table>`
