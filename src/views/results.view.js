@@ -8,6 +8,7 @@
 
 import { esc } from '../utils/html.js';
 import { serviceIcon } from '../components/service-icon.js';
+import { appCredit } from '../components/credit.js';
 import { placeCard } from '../components/place-card.js';
 
 function shell(service, inner) {
@@ -20,6 +21,7 @@ function shell(service, inner) {
       </h2>
     </header>
     ${inner}
+    ${appCredit()}
   </div>`;
 }
 

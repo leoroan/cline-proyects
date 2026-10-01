@@ -233,3 +233,9 @@ t('la home linkea a la guía y los términos', () => {
   assert.match(appEl.innerHTML, /href="\.\/guia\/"/);
   assert.match(appEl.innerHTML, /Guía y términos/);
 });
+
+t('la firma está al pie de todas las vistas', () => {
+  assert.match(appEl.innerHTML, /Hecho con/);
+  assert.match(appEl.innerHTML, /Lean @ MySelfProductions/);
+  assert.match(appEl.innerHTML, /href="https:\/\/myselfproductions\.me\/"/);
+});

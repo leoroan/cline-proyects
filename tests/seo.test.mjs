@@ -149,3 +149,10 @@ t('guía sin íconos bi huérfanos (no carga la fuente de iconos)', async () => 
   const tos = await readFile(new URL('../guia/terminos.html', import.meta.url), 'utf-8');
   assert.ok(!tos.includes('class="bi '));
 });
+
+t('firma en el pie de la guía y los términos', async () => {
+  const landing = await readFile(new URL('../guia/index.html', import.meta.url), 'utf-8');
+  assert.match(landing, /Lean @ MySelfProductions/);
+  const tos = await readFile(new URL('../guia/terminos.html', import.meta.url), 'utf-8');
+  assert.match(tos, /Lean @ MySelfProductions/);
+});

@@ -15,6 +15,7 @@ import { saveLink } from '../services/saved.service.js';
 import { formatDistance } from '../services/geo.service.js';
 import { qrSvg } from '../components/qr.js';
 import { serviceIcon } from '../components/service-icon.js';
+import { appCredit } from '../components/credit.js';
 
 function chunk(list, size) {
   const pages = [];
@@ -159,6 +160,7 @@ export function renderBoard({ hero, strips, layout, now }) {
     </div>
     <footer class="board-footer">
       Escaneá el QR y llevate el lugar en tu teléfono · La información se actualiza sola
+      ${appCredit()}
     </footer>
   </div>`;
 }

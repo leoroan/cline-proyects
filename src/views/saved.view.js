@@ -8,6 +8,7 @@
 
 import { SAVED_TTL_DAYS } from '../services/saved.service.js';
 import { savedCard } from '../components/saved-card.js';
+import { appCredit } from '../components/credit.js';
 
 export function renderSavedConfirm({ place, now }) {
   return `
@@ -22,5 +23,6 @@ export function renderSavedConfirm({ place, now }) {
     <p class="confirm-back">
       <a class="back-link" href="#/"><i class="bi bi-arrow-left" aria-hidden="true"></i> IR AL INICIO</a>
     </p>
+    ${appCredit()}
   </div>`;
 }

@@ -6,6 +6,12 @@
    ============================================================ */
 
 import { paint } from '../utils/dom.js';
+import { appCredit } from '../components/credit.js';
+
+/* Todas las pantallas de gestión llevan la firma al pie. */
+function paintAdmin(html, opts) {
+  return paint(`${html}${appCredit()}`, opts);
+}
 import { esc } from '../utils/html.js';
 import { getServices } from '../services/catalog.service.js';
 import { getPlaces } from '../services/places.service.js';
@@ -56,7 +62,7 @@ export async function renderAdmin(sub = 'menu', param = null) {
 
   const user = await currentUser();
   if (!user) {
-    paint(renderAdminLogin());
+    paintAdmin(renderAdminLogin());
     return;
   }
 
@@ -66,11 +72,11 @@ export async function renderAdmin(sub = 'menu', param = null) {
   switch (sub) {
     case 'lugares': {
       const places = await getPlaces({ includeInactive: true });
-      paint(renderAdminPlaces({ places, flash: f }));
+      paintAdmin(renderAdminPlaces({ places, flash: f }));
       return;
     }
     case 'nuevo':
-      paint(renderPlaceForm({ place: null }));
+      paintAdmin(renderPlaceForm({ place: null }));
       return;
     case 'editar': {
       const places = await getPlaces({ includeInactive: true });
@@ -79,29 +85,29 @@ export async function renderAdmin(sub = 'menu', param = null) {
         location.hash = '#/admin/lugares';
         return;
       }
-      paint(renderPlaceForm({ place }));
+      paintAdmin(renderPlaceForm({ place }));
       return;
     }
     case 'secciones':
       await getPlaces(); // calienta el caché de secciones
-      paint(renderAdminServices({ flash: f }));
+      paintAdmin(renderAdminServices({ flash: f }));
       return;
     case 'equipo':
-      paint(renderAdminUsers({ users: await getUsers(), flash: f }));
+      paintAdmin(renderAdminUsers({ users: await getUsers(), flash: f }));
       return;
     case 'pantalla':
-      paint(renderAdminBoardSettings({ settings: getBoardSettings(), flash: f }));
+      paintAdmin(renderAdminBoardSettings({ settings: getBoardSettings(), flash: f }));
       return;
     case 'mensajes': {
       if (!isOwnerEmail(user.u)) {
-        paint(renderAdminMenu({ user, flash: '⛔ Esa página es solo del dueño del proyecto.' }));
+        paintAdmin(renderAdminMenu({ user, flash: '⛔ Esa página es solo del dueño del proyecto.' }));
         return;
       }
       try {
         const messages = await getMessages();
-        paint(renderMessages({ messages }));
+        paintAdmin(renderMessages({ messages }));
       } catch (e) {
-        paint(
+        paintAdmin(
           renderAdminMenu({
             user,
             flash: `No se pudieron cargar los mensajes (${e?.message ?? e}). ¿Corriste contact.sql en Supabase?`,
@@ -112,17 +118,17 @@ export async function renderAdmin(sub = 'menu', param = null) {
     }
     case 'stats': {
       if (!isOwnerEmail(user.u)) {
-        paint(renderAdminMenu({ user, flash: '⛔ Esa página es solo del dueño del proyecto.' }));
+        paintAdmin(renderAdminMenu({ user, flash: '⛔ Esa página es solo del dueño del proyecto.' }));
         return;
       }
       try {
         const stats = await getStats();
-        paint(renderStats({ stats }));
+        paintAdmin(renderStats({ stats }));
       } catch (e) {
         const msg = String(e?.message ?? e);
         // La pista del SQL solo cuando el error es realmente de la base
         const esDb = /does not exist|permission|denied|solo el dueno|page_views|schema/i.test(msg);
-        paint(
+        paintAdmin(
           renderAdminMenu({
             user,
             flash: `No se pudo cargar la estadística (${msg}).${
@@ -134,10 +140,10 @@ export async function renderAdmin(sub = 'menu', param = null) {
       return;
     }
     case 'datos':
-      paint(renderAdminData({ exportText: await exportData(), flash: f }));
+      paintAdmin(renderAdminData({ exportText: await exportData(), flash: f }));
       return;
     default:
-      paint(renderAdminMenu({ user, flash: f }));
+      paintAdmin(renderAdminMenu({ user, flash: f }));
   }
 }
 
@@ -390,7 +396,7 @@ export async function handleAdminSubmit(event) {
     const fd = new FormData(form);
     const user = await login(fd.get('username'), fd.get('password'));
     if (!user) {
-      paint(
+      paintAdmin(
         renderAdminLogin({
           error: 'Usuario o clave incorrectos. Probá de nuevo.',
           username: String(fd.get('username') ?? ''),
@@ -425,7 +431,7 @@ export async function handleAdminSubmit(event) {
     const fd = new FormData(form);
     const label = String(fd.get('label') ?? '').trim();
     if (label.length < 3) {
-      paint(renderAdminServices({ error: 'La sección necesita un nombre (ej: DUCHAS).' }));
+      paintAdmin(renderAdminServices({ error: 'La sección necesita un nombre (ej: DUCHAS).' }));
       return true;
     }
     await addCustomService({ label, icon: String(fd.get('icon') ?? '').trim() || '📌' });
@@ -442,7 +448,7 @@ export async function handleAdminSubmit(event) {
       password: fd.get('password'),
     });
     if (r.error) {
-      paint(renderAdminUsers({ users: await getUsers(), error: r.error }));
+      paintAdmin(renderAdminUsers({ users: await getUsers(), error: r.error }));
       return true;
     }
     flash = `✔ ${r.user.name} ya puede entrar con su usuario.`;
@@ -465,7 +471,7 @@ export async function handleAdminSubmit(event) {
   if (kind === 'import') {
     const text = String(new FormData(form).get('payload') ?? '').trim();
     if (!text) {
-      paint(
+      paintAdmin(
         renderAdminData({
           exportText: exportData(),
           error: 'Pegá primero el texto copiado en el otro aparato.',
@@ -478,7 +484,7 @@ export async function handleAdminSubmit(event) {
       flash = `✔ Listo: se sumaron ${res.places} lugares y ${res.services} secciones${res.users ? `, y ${res.users} usuarios` : ''}.`;
       renderAdmin('datos');
     } catch {
-      paint(
+      paintAdmin(
         renderAdminData({
           exportText: exportData(),
           error: 'Ese texto no se entiende. Copialo completo de nuevo.',

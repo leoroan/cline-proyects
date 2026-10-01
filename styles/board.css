@@ -329,3 +329,10 @@
     transition: none !important;
   }
 }
+
+/* Firma en la cartelería (escala con la pantalla) */
+.board .app-credit {
+  margin-top: 1.2vmin;
+  padding: 0;
+  font-size: max(0.8rem, 1.5vmin);
+}
