@@ -234,6 +234,19 @@ La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin 
 - **Modo local automático**: sin librería/red (tests, demo offline), toda la gestión cae a localStorage como antes — misma UI.
 - **Setup**: `supabase/README.md` (5 pasos). Export/import ahora es **v2** (lugares + secciones; los usuarios viven en Auth, no se exportan).
 
+## 🛡️ Seguridad (a esta altura, con lo hecho)
+
+- **CSP por meta** (`index.html`): `script-src 'self'` + hash del JSON-LD — solo corre código del propio sitio; `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `upgrade-insecure-requests`. (GitHub Pages no permite headers; el meta es la vía. `frame-ancestors` no aplica por meta — limitación conocida.)
+- **Referrer policy** `strict-origin-when-cross-origin`.
+- **Anti-spam en la base** (`supabase/security.sql`): trigger que limita a 20 visitas/minuto por visitante anónimo en `page_views` (la app legítima hace ≤1).
+- **Constraints de coordenadas** en `places` (lat −90..90, lng −180..180).
+- Ya estaba: RLS en todas las tablas, sesiones en el aparato, cero dependencias de CDN (todo vendored), escaping de todo dato que se renderiza.
+
+## 📄 Landing y Términos (`/guia/`)
+
+- **`guia/index.html`**: landing estática e indexable (sin JS obligatorio): qué es, cómo se usa en 3 pasos, los 6 servicios, modo pantalla, QR, principios y FAQ (con `FAQPage` JSON-LD para SEO).
+- **`guia/terminos.html`**: Términos en lenguaje claro — qué es y qué no es (no oficial, verificar en el lugar), privacidad sin registro, uso aceptable (anti-aprovechamiento: el equipo puede pausar/borrar lugares o usuarios), responsabilidad y contacto.
+
 ## 🔐 Zona de gestión (`#/admin`)
 
 Ruta **oculta** (no hay enlace público): hay que escribir `#/admin` a mano. Pide usuario y clave.

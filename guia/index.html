@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guía — Ayuda Cerca: comida, ropa y dónde dormir cerca tuyo</title>
+  <meta name="description" content="Qué es Ayuda Cerca y cómo usarla: información comunitaria simple para encontrar dónde comer, conseguir ropa y dónde dormir. Gratis, sin registro, desde cualquier celular." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://myselfproductions.me/cline-proyects/guia/" />
+  <meta name="theme-color" content="#faf6ef" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Ayuda Cerca — Guía de la herramienta comunitaria" />
+  <meta property="og:description" content="Dónde comer hoy, dónde dan ropa, dónde dormir. Información simple, al instante, desde cualquier celular." />
+  <meta property="og:url" content="https://myselfproductions.me/cline-proyects/guia/" />
+  <meta property="og:image" content="https://myselfproductions.me/cline-proyects/assets/og-card.svg" />
+  <link rel="icon" href="../assets/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles/fonts.css" />
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--paper); color: var(--ink);
+      font-family: var(--font); line-height: 1.55;
+    }
+    .wrap { max-width: 46rem; margin-inline: auto; padding: 0 1.25rem; }
+    header.top {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 1rem; padding: 1rem 0; flex-wrap: wrap;
+    }
+    .brand { font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--ink); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      min-height: 3.2rem; padding: 0 1.4rem; border-radius: 1rem;
+      background: var(--brand); color: #fff; font-weight: 800; font-size: 1.05rem;
+      text-decoration: none; letter-spacing: .02em; border: 0; cursor: pointer;
+    }
+    .btn--ghost { background: transparent; color: var(--brand); border: .14rem solid var(--brand); }
+    .hero { padding: 2.5rem 0 1.5rem; }
+    .hero h1 { font-size: clamp(2.2rem, 6vw, 3.4rem); margin: 0 0 .8rem; line-height: 1.1; }
+    .hero p { font-size: 1.25rem; color: var(--ink-soft); margin: 0 0 1.6rem; max-width: 34rem; }
+    section { padding: 1.8rem 0; border-top: .14rem solid var(--line); }
+    h2 { font-size: 1.7rem; margin: 0 0 1rem; }
+    .steps { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+    .card {
+      background: var(--card); border: .16rem solid var(--line);
+      border-radius: var(--radius); padding: 1.2rem;
+    }
+    .card .big { font-size: 2.2rem; }
+    .card h3 { margin: .4rem 0 .3rem; font-size: 1.15rem; }
+    .card p { margin: 0; color: var(--ink-soft); font-weight: 600; }
+    .services { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+    .svc { background: var(--card); border: .16rem solid var(--line); border-radius: 1rem;
+      padding: 1rem; text-align: center; font-weight: 800; font-size: 1.05rem; }
+    .svc span { display: block; font-size: 2.2rem; margin-bottom: .3rem; }
+    ul.tick { padding-left: 1.2rem; margin: 0; }
+    ul.tick li { margin: .45rem 0; }
+    details { border-top: .12rem solid var(--line); padding: .9rem 0; }
+    details:first-of-type { border-top: 0; }
+    summary { font-weight: 800; font-size: 1.1rem; cursor: pointer; }
+    details p { margin: .5rem 0 0; color: var(--ink-soft); }
+    footer { border-top: .14rem solid var(--line); padding: 1.5rem 0 3rem; color: var(--ink-soft); font-size: .95rem; }
+    footer a { color: var(--brand); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="./">🍲 Ayuda Cerca</a>
+      <a class="btn" href="../">ENTRAR A LA APP →</a>
+    </header>
+
+    <section class="hero" style="border-top: 0;">
+      <h1>¿Qué necesitás?</h1>
+      <p>
+        Ayuda Cerca te dice dónde <strong>desayunar, almorzar, merendar y cenar</strong>,
+        dónde entregan <strong>ropa</strong> y dónde hay un <strong>lugar para dormir</strong>.
+        Gratis, sin registro, desde cualquier celular.
+      </p>
+      <a class="btn" href="../">ENTRAR AHORA →</a>
+    </section>
+
+    <section>
+      <h2>Cómo se usa</h2>
+      <div class="steps">
+        <div class="card">
+          <div class="big">1️⃣</div>
+          <h3>Elegí qué necesitás</h3>
+          <p>Botones grandes con ícono. No hace falta leer mucho.</p>
+        </div>
+        <div class="card">
+          <div class="big">2️⃣</div>
+          <h3>Mirá dónde y a qué hora</h3>
+          <p>Nombre, dirección, horario y si está abierto ahora. Nada más.</p>
+        </div>
+        <div class="card">
+          <div class="big">3️⃣</div>
+          <h3>Tocá CÓMO LLEGAR</h3>
+          <p>Se abre el mapa de tu teléfono con el camino a pie.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Qué vas a encontrar</h2>
+      <div class="services">
+        <div class="svc"><span>🍞</span>Desayuno</div>
+        <div class="svc"><span>🍲</span>Almuerzo</div>
+        <div class="svc"><span>☕</span>Merienda</div>
+        <div class="svc"><span>🍽️</span>Cena</div>
+        <div class="svc"><span>👕</span>Ropa</div>
+        <div class="svc"><span>🛏️</span>Dónde dormir</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Escaneá y llevate la info</h2>
+      <p>
+        Si la ves en una <strong>TV o cartel</strong> (en un comedor, centro comunitario o plaza),
+        cada lugar tiene su <strong>código QR</strong>: lo escaneás con la cámara de tu teléfono
+        y ese lugar te queda <strong>guardado</strong> en tu aparato, con su horario y cómo llegar.
+      </p>
+    </section>
+
+    <section>
+      <h2>¿Tenés un comedor o centro comunitario?</h2>
+      <ul class="tick">
+        <li><strong>Modo pantalla para TV</strong>: la app funciona como cartel informativo que se actualiza solo, con los turnos de comida del día.</li>
+        <li><strong>Cargar lugares es simple</strong>: nombre, dirección y horarios. Lo puede hacer una persona sin experiencia informática.</li>
+        <li><strong>Equipo por zonas</strong>: cada punto de la ciudad puede tener alguien que mantenga su información al día.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Los principios</h2>
+      <ul class="tick">
+        <li><strong>Gratis</strong>, hoy y siempre.</li>
+        <li><strong>Sin registro</strong>: no pedimos tus datos.</li>
+        <li><strong>Sin publicidad y sin rastreadores.</strong></li>
+        <li><strong>Hecha para celulares económicos</strong> y para leerse fácil, incluso con poca lectura.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Es gratis?</summary>
+        <p>Sí. Es una herramienta comunitaria, sin costo, sin publicidad y sin planes pagos para quien la usa.</p>
+      </details>
+      <details>
+        <summary>¿Tengo que registrarme o dar mis datos?</summary>
+        <p>No. No pedimos nombre, teléfono ni documento. Lo que guardás (tus lugares) queda solo en tu aparato.</p>
+      </details>
+      <details>
+        <summary>¿La información es oficial?</summary>
+        <p>No es un servicio del Estado: la información la cargan voluntarios de la comunidad y puede cambiar. Si un dato es importante, confirmalo en el lugar antes de ir.</p>
+      </details>
+      <details>
+        <summary>¿Y si un horario o una dirección está mal?</summary>
+        <p>Puede pasar: los horarios cambian. Avisanos por el contacto de abajo y lo corregimos.</p>
+      </details>
+      <details>
+        <summary>¿Funciona sin internet?</summary>
+        <p>Si ya la usaste, la última información queda guardada en tu aparato y se ve aunque no tengas señal en ese momento.</p>
+      </details>
+    </section>
+
+    <footer>
+      <p>
+        <a href="./terminos.html">Términos de uso</a> ·
+        <a href="../">Entrar a la app</a> ·
+        Contacto: <a href="mailto:leoroan@gmail.com">leoroan@gmail.com</a>
+      </p>
+      <p>Ayuda Cerca — herramienta comunitaria, gratuita y abierta. Última actualización: septiembre 2026.</p>
+    </footer>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "¿Es gratis?", "acceptedAnswer": { "@type": "Answer", "text": "Sí. Es una herramienta comunitaria, sin costo, sin publicidad y sin planes pagos." } },
+      { "@type": "Question", "name": "¿Tengo que registrarme o dar mis datos?", "acceptedAnswer": { "@type": "Answer", "text": "No. No pedimos nombre, teléfono ni documento. Lo que guardás queda solo en tu aparato." } },
+      { "@type": "Question", "name": "¿La información es oficial?", "acceptedAnswer": { "@type": "Answer", "text": "No es un servicio del Estado: la cargan voluntarios de la comunidad y puede cambiar. Confirmá en el lugar antes de ir." } },
+      { "@type": "Question", "name": "¿Funciona sin internet?", "acceptedAnswer": { "@type": "Answer", "text": "Si ya la usaste, la última información queda guardada en tu aparato y se ve aunque no tengas señal." } }
+    ]
+  }
+  </script>
+</body>
+</html>
+

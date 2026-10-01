@@ -78,3 +78,43 @@ if (failed) {
   process.exit(1);
 }
 console.log('\nTests de SEO OK ✔\n');
+
+t('CSP presente y con el hash real del JSON-LD', async () => {
+  assert.match(html, /http-equiv="Content-Security-Policy"/);
+  assert.match(html, /default-src 'self'/);
+  assert.match(html, /object-src 'none'/);
+  // El hash del meta debe coincidir con el bloque JSON-LD actual
+  const { createHash } = await import('node:crypto');
+  const m = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  const hash = createHash('sha256').update(m[1], 'utf8').digest('base64');
+  assert.ok(html.includes(`'sha256-${hash}'`), 'el hash del CSP no coincide con el JSON-LD');
+});
+
+t('referrer policy', () => {
+  assert.match(html, /name="referrer" content="strict-origin-when-cross-origin"/);
+});
+
+t('landing /guia/ existe, es indexable y linkea a la app', async () => {
+  const landing = await readFile(new URL('../guia/index.html', import.meta.url), 'utf-8');
+  assert.match(landing, /Ayuda Cerca/);
+  assert.match(landing, /ENTRAR A LA APP|ENTRAR AHORA/);
+  assert.match(landing, /FAQPage/);
+  assert.match(landing, /terminos\.html/);
+  assert.match(landing, /🛏️/);
+});
+
+t('términos de uso con las cláusulas clave', async () => {
+  const tos = await readFile(new URL('../guia/terminos.html', import.meta.url), 'utf-8');
+  assert.match(tos, /Qué es Ayuda Cerca/);
+  assert.match(tos, /Qué NO es/);
+  assert.match(tos, /Sin registro/);
+  assert.match(tos, /sin rastreadores, sin publicidad/i);
+  assert.match(tos, /Uso aceptable/);
+  assert.match(tos, /911/);
+});
+
+t('sitemap incluye landing y términos', async () => {
+  const sitemap = await readFile(new URL('../sitemap.xml', import.meta.url), 'utf-8');
+  assert.match(sitemap, /guia\//);
+  assert.match(sitemap, /guia\/terminos\.html/);
+});
