@@ -56,8 +56,7 @@ const fakeClient = {
   rpc: (fn, args) => {
     const arg = JSON.stringify(args ?? {});
     const payloads = {
-      'stats_daily:{"days":14}': { data: [{ day: HOY, views: 7 }], error: null },
-      'stats_daily:{"days":14,"exclude_admin":true}': { data: [{ day: HOY, views: 5 }], error: null },
+      'stats_daily:{"days":14}': { data: [{ day: HOY, publicas: 5, dueno: 1, equipo: 1 }], error: null },
       'stats_paths:{}': { data: [{ path: 'home', views: 40 }], error: null },
       'stats_visitors:{"days":14}': { data: [{ day: HOY, visitors: 3 }], error: null },
       'stats_devices:{}': { data: [{ device: 'celular', views: 60 }], error: null },
@@ -111,12 +110,13 @@ t('total histórico sale del count de page_views', () => {
   assert.equal(stats.total, 78);
 });
 
-t('diarias / públicas / visitantes mapeadas a sus funciones', () => {
-  assert.equal(stats.today, 7);        // stats_daily (día de hoy)
-  assert.equal(stats.todayPublic, 5);  // stats_daily exclude_admin
-  assert.equal(stats.dailySplit[0].publicas, 5);
-  assert.equal(stats.dailySplit[0].gestion, 2); // 7 - 5
-  assert.equal(stats.visitorsToday, 3);         // stats_visitors
+t('diarias por actor (público / dueño / equipo)', () => {
+  assert.equal(stats.todayPublic, 5);  // público (sin sesión)
+  assert.equal(stats.todayDueno, 1);   // dueño
+  assert.equal(stats.todayEquipo, 1);  // equipo
+  assert.equal(stats.today, 7);        // total del día
+  assert.equal(stats.dailySplit[0].equipo, 1);
+  assert.equal(stats.visitorsToday, 3); // stats_visitors
 });
 
 t('rutas, dispositivos y horarios mapeados', () => {

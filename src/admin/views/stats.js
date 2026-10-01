@@ -30,6 +30,10 @@ export function renderStats({ stats }) {
     hours = [],
     todayPublic = today,
     weekPublic = week,
+    todayDueno = 0,
+    todayEquipo = 0,
+    weekDueno = 0,
+    weekEquipo = 0,
     dailySplit = null,
   } = stats;
 
@@ -43,7 +47,8 @@ export function renderStats({ stats }) {
       <p class="admin-sub">
         Cuánto y cómo se usa la app. <strong>Solo la ves vos</strong> (el dueño).
         Una <strong>visita</strong> = una pantalla vista (home, un servicio, el panel,
-        un QR guardado). Las de gestión (tus clics en #/admin) se cuentan aparte.
+        un QR guardado). Se separan por quién entra: <strong>público</strong> (sin sesión,
+        la gente), <strong>vos</strong> (el dueño) y <strong>equipo</strong> (colaboradores).
         Fechas en hora de Argentina (GMT-3).
       </p>
     </header>
@@ -52,12 +57,12 @@ export function renderStats({ stats }) {
       <div class="stats-card">
         <p class="stats-card__num">${todayPublic}</p>
         <p class="stats-card__label">VISITAS HOY</p>
-        <p class="stats-card__sub">+${today - todayPublic} gestión</p>
+        <p class="stats-card__sub">+${todayDueno} vos · +${todayEquipo} equipo</p>
       </div>
       <div class="stats-card">
         <p class="stats-card__num">${weekPublic}</p>
         <p class="stats-card__label">VISITAS 7 DÍAS</p>
-        <p class="stats-card__sub">+${week - weekPublic} gestión</p>
+        <p class="stats-card__sub">+${weekDueno} vos · +${weekEquipo} equipo</p>
       </div>
       <div class="stats-card">
         <p class="stats-card__num">${total}</p>
@@ -87,12 +92,12 @@ export function renderStats({ stats }) {
       ${
         dailySplit && dailySplit.length
           ? `<table class="stats-table">
-              <thead><tr><th>Día</th><th>Públicas</th><th>Gestión</th></tr></thead>
+              <thead><tr><th>Día</th><th>Públicas</th><th>Vos</th><th>Equipo</th></tr></thead>
               <tbody>
               ${dailySplit
                 .map(
                   (d) =>
-                    `<tr><td>${esc(dayLabel(d.day))}</td><td><strong>${d.publicas}</strong></td><td>${d.gestion}</td></tr>`
+                    `<tr><td>${esc(dayLabel(d.day))}</td><td><strong>${d.publicas}</strong></td><td>${d.dueno}</td><td>${d.equipo}</td></tr>`
                 )
                 .join('')}
               </tbody></table>`

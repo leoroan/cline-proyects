@@ -61,26 +61,40 @@ function currentDevice() {
 
 let lastTrack = { path: null, at: 0 };
 
+/** 'publico' (sin sesión) · 'dueno' (owner) · 'equipo' (colaborador) */
+async function currentActor() {
+  try {
+    const {
+      data: { session },
+    } = await sb().auth.getSession();
+    const email = session?.user?.email;
+    if (!email) return 'publico';
+    return isOwnerEmail(email) ? 'dueno' : 'equipo';
+  } catch {
+    return 'publico';
+  }
+}
+
 export function track(path) {
   if (!isSupabaseAvailable()) return;
   const now = Date.now();
   if (lastTrack.path === path && now - lastTrack.at < 60_000) return;
   lastTrack = { path, at: now };
-  try {
-    sb()
-      .from('page_views')
-      .insert({
+  const device = currentDevice();
+  const visitor = visitorId();
+  currentActor()
+    .then((actor) =>
+      sb().from('page_views').insert({
         path: String(path).slice(0, 120),
-        device: currentDevice(),
-        visitor: visitorId(),
+        device,
+        visitor,
+        actor,
       })
-      .then(({ error }) => {
-        if (error) console.warn('track:', error.message);
-      })
-      .catch(() => {});
-  } catch {
-    /* nunca bloquea la navegación */
-  }
+    )
+    .then(({ error }) => {
+      if (error) console.warn('track:', error.message);
+    })
+    .catch(() => {});
 }
 
 /* ---------- Estadística (solo dueño) ---------- */
@@ -94,43 +108,45 @@ function artDateStr(date) {
 export async function getStats() {
   // ORDEN CANÓNICO: el destructuring sigue EXACTAMENTE este orden.
   // (Cualquier query nueva va SIEMPRE al final, con su nombre al final.)
-  const [dailyRes, dailyPublicRes, pathsRes, recentRes, totalRes, activeRes, inactiveRes, servicesRes, teamRes, visitorsRes, devicesRes, hoursRes] =
+  const [dailyRes, pathsRes, recentRes, totalRes, activeRes, inactiveRes, servicesRes, teamRes, visitorsRes, devicesRes, hoursRes] =
     await Promise.all([
-      sb().rpc('stats_daily', { days: 14 }),                    //  1 dailyRes
-      sb().rpc('stats_daily', { days: 14, exclude_admin: true }), //  2 dailyPublicRes
-      sb().rpc('stats_paths'),                                   //  3 pathsRes
-      sb()                                                       //  4 recentRes
+      sb().rpc('stats_daily', { days: 14 }),                    //  1 dailyRes (publicas/dueno/equipo)
+      sb().rpc('stats_paths'),                                   //  2 pathsRes
+      sb()                                                       //  3 recentRes
         .from('page_views')
         .select('path, created_at')
         .order('created_at', { ascending: false })
         .limit(10),
-      sb().from('page_views').select('*', { count: 'exact', head: true }), //  5 totalRes
-      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', true),  //  6 activeRes
-      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', false), //  7 inactiveRes
-      sb().from('custom_services').select('*', { count: 'exact', head: true }), //  8 servicesRes
-      sb().from('profiles').select('*', { count: 'exact', head: true }),        //  9 teamRes
-      sb().rpc('stats_visitors', { days: 14 }),                  // 10 visitorsRes
-      sb().rpc('stats_devices'),                                 // 11 devicesRes
-      sb().rpc('stats_hours'),                                   // 12 hoursRes
+      sb().from('page_views').select('*', { count: 'exact', head: true }), //  4 totalRes
+      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', true),  //  5 activeRes
+      sb().from('places').select('*', { count: 'exact', head: true }).eq('active', false), //  6 inactiveRes
+      sb().from('custom_services').select('*', { count: 'exact', head: true }), //  7 servicesRes
+      sb().from('profiles').select('*', { count: 'exact', head: true }),        //  8 teamRes
+      sb().rpc('stats_visitors', { days: 14 }),                  //  9 visitorsRes
+      sb().rpc('stats_devices'),                                 // 10 devicesRes
+      sb().rpc('stats_hours'),                                   // 11 hoursRes
     ]);
 
   if (dailyRes.error) throw new Error(dailyRes.error.message);
 
-  const daily = (dailyRes.data ?? []).map((r) => ({
+  // Por día: público (sin sesión) vs dueño vs equipo — la señal real
+  const dailySplit = (dailyRes.data ?? []).map((r) => ({
     day: String(r.day),
-    views: Number(r.views),
+    publicas: Number(r.publicas),
+    dueno: Number(r.dueno),
+    equipo: Number(r.equipo),
   }));
   const todayStr = artDateStr(new Date());
-  const today = daily.find((d) => d.day === todayStr)?.views ?? 0;
-  const week = daily.slice(-7).reduce((acc, d) => acc + d.views, 0);
-
-  // Visitas PÚBLICAS (sin las de gestión) — la señal real de uso
-  const dailyPublic = (dailyPublicRes.data ?? []).map((r) => ({
-    day: String(r.day),
-    views: Number(r.views),
-  }));
-  const todayPublic = dailyPublic.find((d) => d.day === todayStr)?.views ?? 0;
-  const weekPublic = dailyPublic.slice(-7).reduce((acc, d) => acc + d.views, 0);
+  const todayRow = dailySplit.find((d) => d.day === todayStr);
+  const todayPublic = todayRow?.publicas ?? 0;
+  const todayDueno = todayRow?.dueno ?? 0;
+  const todayEquipo = todayRow?.equipo ?? 0;
+  const today = todayPublic + todayDueno + todayEquipo;
+  const last7 = dailySplit.slice(-7);
+  const weekPublic = last7.reduce((a, d) => a + d.publicas, 0);
+  const weekDueno = last7.reduce((a, d) => a + d.dueno, 0);
+  const weekEquipo = last7.reduce((a, d) => a + d.equipo, 0);
+  const week = weekPublic + weekDueno + weekEquipo;
 
   const visitors = (visitorsRes.data ?? []).map((r) => ({
     day: String(r.day),
@@ -138,11 +154,10 @@ export async function getStats() {
   }));
   const visitorsToday = visitors.find((d) => d.day === todayStr)?.visitors ?? 0;
 
-  // Por día: públicas vs gestión (para la tabla)
-  const dailySplit = daily.map((d) => {
-    const pub = dailyPublic.find((p) => p.day === d.day)?.views ?? 0;
-    return { day: d.day, publicas: pub, gestion: d.views - pub };
-  });
+  const daily = dailySplit.map((d) => ({
+    day: d.day,
+    views: d.publicas + d.dueno + d.equipo,
+  }));
   const visitorsWeek = visitors.slice(-7).reduce((acc, d) => acc + d.visitors, 0);
 
   return {
@@ -157,6 +172,10 @@ export async function getStats() {
     team: teamRes.count ?? 0,
     todayPublic,
     weekPublic,
+    todayDueno,
+    todayEquipo,
+    weekDueno,
+    weekEquipo,
     dailySplit,
     visitorsToday,
     visitorsWeek,
