@@ -246,6 +246,7 @@ La interfaz se ajusta a **cualquier** resolución (celular, tablet, PC, TV) sin 
 
 - **`guia/index.html`**: landing estática e indexable (sin JS obligatorio): qué es, cómo se usa en 3 pasos, los 6 servicios, modo pantalla, QR, principios y FAQ (con `FAQPage` JSON-LD para SEO).
 - **`guia/terminos.html`**: Términos en lenguaje claro — qué es y qué no es (no oficial, verificar en el lugar), privacidad sin registro, uso aceptable (anti-aprovechamiento: el equipo puede pausar/borrar lugares o usuarios), responsabilidad y contacto.
+- **Formulario de contacto** (`/guia/#contacto` + `guia/contacto.js`): el email del dueño NO aparece en ningún lado. Los mensajes van a `contact_messages` (Supabase) y el dueño los lee en ⚙️ → **📨 MENSAJES** (solo él, por RLS). Anti-spam: honeypot + pregunta humana + rate limit (3/día por visitante) y honeypot también del lado de la base.
 
 ## 🔐 Zona de gestión (`#/admin`)
 

@@ -372,3 +372,49 @@ t('renderStats muestra visitantes, dispositivos y franjas horarias', () => {
   assert.match(html, /celular/);
   assert.match(html, /12:00 – 12:59/);
 });
+
+console.log('\nFormulario de contacto:');
+
+const { validateMessage } = await import('../guia/contacto.js');
+const { renderMessages } = await import('../src/admin/views/messages.js');
+
+t('mensaje válido pasa', () => {
+  assert.deepEqual(
+    validateMessage({ message: 'Hola, quiero colaborar con un comedor', website: '', math: '5' }),
+    []
+  );
+});
+
+t('honeypot lleno → marcado como spam (los bots no pasan)', () => {
+  assert.ok(validateMessage({ message: 'Mensaje largo suficiente', website: 'http://spam.com', math: '5' }).includes('spam'));
+});
+
+t('mensaje corto → error amigable', () => {
+  assert.ok(
+    validateMessage({ message: 'hola', website: '', math: '5' })[0].includes('más')
+  );
+});
+
+t('suma mal respondida → error', () => {
+  assert.ok(
+    validateMessage({ message: 'Mensaje largo suficiente', website: '', math: '4' })[0].includes('suma')
+  );
+});
+
+t('renderMessages: nuevos con badge, contacto visible, fecha DD-MM-AAAA', () => {
+  const html = renderMessages({
+    messages: [
+      { id: 1, message: 'Quiero sumar mi comedor', contact: 'maria@mail.com', read: false, created_at: '2026-09-30T15:04:09+00:00' },
+      { id: 2, message: 'Gracias por la app', contact: null, read: true, created_at: '2026-09-29T10:00:00+00:00' },
+    ],
+  });
+  assert.match(html, /NUEVO/);
+  assert.match(html, /1 sin leer/);
+  assert.match(html, /30-09-2026 12:04/);
+  assert.match(html, /maria@mail.com/);
+  assert.match(html, /MARCAR LEÍDO/);
+});
+
+t('renderMessages vacío no rompe', () => {
+  assert.match(renderMessages({ messages: [] }), /Todavía no hay mensajes/);
+});

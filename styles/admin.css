@@ -555,3 +555,28 @@
 .stats-table th:nth-child(2) {
   text-align: right;
 }
+
+/* ---------- Mensajes de contacto (solo dueño) ---------- */
+
+.admin-place.is-unread {
+  border-color: var(--brand);
+}
+
+.messages-date {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.messages-text {
+  margin: 0.4rem 0 0;
+  font-size: 1.05rem;
+  white-space: pre-wrap;
+}
+
+.messages-contact {
+  margin: 0.4rem 0 0;
+  color: var(--ink-soft);
+  font-weight: 600;
+}

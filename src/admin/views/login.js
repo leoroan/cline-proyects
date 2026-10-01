@@ -76,12 +76,20 @@ const MENU_ITEMS = [
   },
 ];
 
-const OWNER_ITEM = {
-  href: '#/admin/stats',
-  icon: 'bi-bar-chart-line',
-  title: 'ESTADÍSTICA',
-  desc: 'Cuánto y cómo se usa la app. Solo la ve el dueño.',
-};
+const OWNER_ITEMS = [
+  {
+    href: '#/admin/stats',
+    icon: 'bi-bar-chart-line',
+    title: 'ESTADÍSTICA',
+    desc: 'Cuánto y cómo se usa la app. Solo la ve el dueño.',
+  },
+  {
+    href: '#/admin/mensajes',
+    icon: 'bi-envelope',
+    title: 'MENSAJES',
+    desc: 'Lo que escriben desde el formulario de contacto de la guía.',
+  },
+];
 
 export function renderAdminMenu({ user, flash = null }) {
   return `
@@ -94,7 +102,7 @@ export function renderAdminMenu({ user, flash = null }) {
     </header>
     <nav class="admin-menu" aria-label="Opciones de gestión">
       ${(isOwnerEmail(user.u)
-        ? [...MENU_ITEMS.slice(0, 5), OWNER_ITEM, ...MENU_ITEMS.slice(5)]
+        ? [...MENU_ITEMS.slice(0, 5), ...OWNER_ITEMS, ...MENU_ITEMS.slice(5)]
         : MENU_ITEMS
       ).map(
         (i) => `

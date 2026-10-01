@@ -46,7 +46,15 @@ Crea la tabla `page_views` y las funciones de estadística. La app registra
 visitas sola (rutas vistas); la página 📊 ESTADÍSTICA en `#/admin` la ve
 **solo el dueño** (`leoroan@gmail.com`, por RLS).
 
-## 6️⃣ Avisar
+## 6️⃣ (Opcional) Formulario de contacto sin exponer el email
+
+Otra *New query* → pegar [`contact.sql`](./contact.sql) → **Run**.
+
+Crea `contact_messages` (cualquiera escribe, solo el dueño lee, con
+honeypot + rate limit anti-spam). La app muestra el formulario en la
+guía (`#contacto`) y el dueño los lee en ⚙️ → 📨 MENSAJES.
+
+## 7️⃣ Avisar
 
 Con eso listo, el frontend se conecta solo (la URL y la publishable key ya
 están en el código: son públicas por diseño; la seguridad la da RLS).

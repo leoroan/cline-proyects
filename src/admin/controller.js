@@ -33,6 +33,8 @@ import {
 import { parseMapsLink, isShortMapsLink } from './maps.js';
 import { renderAdminLogin, renderAdminMenu } from './views/login.js';
 import { renderStats } from './views/stats.js';
+import { renderMessages } from './views/messages.js';
+import { getMessages, markMessageRead, deleteMessage } from '../services/contact.service.js';
 import { getStats, isOwnerEmail } from '../services/analytics.service.js';
 import { renderAdminPlaces, renderPlaceForm } from './views/places.js';
 import {
@@ -90,6 +92,24 @@ export async function renderAdmin(sub = 'menu', param = null) {
     case 'pantalla':
       paint(renderAdminBoardSettings({ settings: getBoardSettings(), flash: f }));
       return;
+    case 'mensajes': {
+      if (!isOwnerEmail(user.u)) {
+        paint(renderAdminMenu({ user, flash: '⛔ Esa página es solo del dueño del proyecto.' }));
+        return;
+      }
+      try {
+        const messages = await getMessages();
+        paint(renderMessages({ messages }));
+      } catch (e) {
+        paint(
+          renderAdminMenu({
+            user,
+            flash: `No se pudieron cargar los mensajes (${e?.message ?? e}). ¿Corriste contact.sql en Supabase?`,
+          })
+        );
+      }
+      return;
+    }
     case 'stats': {
       if (!isOwnerEmail(user.u)) {
         paint(renderAdminMenu({ user, flash: '⛔ Esa página es solo del dueño del proyecto.' }));
@@ -173,6 +193,18 @@ export async function handleAdminClick(event) {
       rerender();
       return true;
     }
+
+    case 'read-message':
+      await markMessageRead(Number(el.dataset.id));
+      flash = '✔ Marcado como leído.';
+      rerender();
+      return true;
+
+    case 'delete-message':
+      await deleteMessage(Number(el.dataset.id));
+      flash = '✔ Mensaje borrado.';
+      rerender();
+      return true;
 
     case 'emoji': {
       const form = el.closest('form');

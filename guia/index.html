@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-7zbrzrP86kyJA5X2jS+s+uDqyWay/z9g/VoleMi3n3U='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://bpvfgyxwdjroxypbmejy.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <title>Guía — Ayuda Cerca: comida, ropa y dónde dormir cerca tuyo</title>
   <meta name="description" content="Qué es Ayuda Cerca y cómo usarla: información comunitaria simple para encontrar dónde comer, conseguir ropa y dónde dormir. Gratis, sin registro, desde cualquier celular." />
   <meta name="robots" content="index, follow" />
@@ -60,6 +62,16 @@
     details p { margin: .5rem 0 0; color: var(--ink-soft); }
     footer { border-top: .14rem solid var(--line); padding: 1.5rem 0 3rem; color: var(--ink-soft); font-size: .95rem; }
     footer a { color: var(--brand); font-weight: 700; }
+    form.contact { display: flex; flex-direction: column; gap: .8rem; max-width: 30rem; }
+    form.contact label { font-weight: 800; font-size: .95rem; }
+    form.contact textarea, form.contact input {
+      font: inherit; padding: .8rem 1rem; width: 100%;
+      border: .14rem solid var(--line); border-radius: .8rem;
+      background: var(--card); color: var(--ink);
+    }
+    .contact-status { margin: 0; }
+    .contact-status.is-error { color: var(--bad); font-weight: 700; }
+    .contact-ok { background: var(--highlight); border-radius: 1rem; padding: 1rem 1.2rem; font-weight: 700; margin: 0; }
   </style>
 </head>
 <body>
@@ -164,11 +176,37 @@
       </details>
     </section>
 
+    <section id="contacto">
+      <h2>¿Dudas, correcciones o querés colaborar?</h2>
+      <p>Dejanos un mensaje. Si querés respuesta, poné tu mail o teléfono (opcional).</p>
+      <form id="contact-form" class="contact">
+        <label for="c-msg">Tu mensaje</label>
+        <textarea id="c-msg" name="message" rows="4" required
+          minlength="10" maxlength="2000"
+          placeholder="Dudas, correcciones, o cómo querés colaborar"></textarea>
+
+        <label for="c-contact">¿Cómo te contactamos? (opcional)</label>
+        <input id="c-contact" name="contact" type="text"
+          placeholder="Mail o teléfono (opcional)" />
+
+        <label for="c-math">¿Cuánto es 2 + 3? (para evitar spam)</label>
+        <input id="c-math" name="math" type="text" inputmode="numeric"
+          autocomplete="off" required />
+
+        <!-- honeypot: invisible para personas; los bots lo llenan -->
+        <input name="website" type="text" aria-hidden="true" tabindex="-1"
+          autocomplete="off" style="position:absolute; left:-9999px; top:0;" />
+
+        <p class="contact-status" data-status aria-live="polite"></p>
+        <button class="btn" type="submit">ENVIAR MENSAJE</button>
+      </form>
+    </section>
+
     <footer>
       <p>
         <a href="./terminos.html">Términos de uso</a> ·
         <a href="../">Entrar a la app</a> ·
-        Contacto: <a href="mailto:leoroan@gmail.com">leoroan@gmail.com</a>
+        <a href="#contacto">Contacto</a>
       </p>
       <p>Ayuda Cerca — herramienta comunitaria, gratuita y abierta. Última actualización: septiembre 2026.</p>
     </footer>
@@ -186,6 +224,7 @@
     ]
   }
   </script>
+  <script src="./contacto.js"></script>
 </body>
 </html>
 

@@ -118,3 +118,19 @@ t('sitemap incluye landing y términos', async () => {
   assert.match(sitemap, /guia\//);
   assert.match(sitemap, /guia\/terminos\.html/);
 });
+
+t('formulario de contacto en la landing, sin exponer el email', async () => {
+  const landing = await readFile(new URL('../guia/index.html', import.meta.url), 'utf-8');
+  assert.match(landing, /id="contacto"/);
+  assert.match(landing, /contacto\.js/);
+  assert.match(landing, /honeypot/i);
+  assert.ok(!landing.includes('mailto:'));
+  assert.ok(!landing.includes('leoroan@gmail.com'));
+});
+
+t('términos linkean al formulario, sin mailto', async () => {
+  const tos = await readFile(new URL('../guia/terminos.html', import.meta.url), 'utf-8');
+  assert.match(tos, /index\.html#contacto/);
+  assert.ok(!tos.includes('mailto:'));
+  assert.ok(!tos.includes('leoroan@gmail.com'));
+});
