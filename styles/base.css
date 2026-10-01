@@ -103,3 +103,12 @@ button {
   white-space: nowrap;
   border: 0;
 }
+
+/* Versión visible (diagnóstico de caché) */
+.app-version {
+  margin: 0.8rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  opacity: 0.8;
+}

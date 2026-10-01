@@ -5,6 +5,7 @@
 
 import { esc } from '../../utils/html.js';
 import { isOwnerEmail } from '../../services/analytics.service.js';
+import { APP_VERSION } from '../../config/version.js';
 
 export function renderAdminLogin({ error = null, username = '' } = {}) {
   return `
@@ -32,6 +33,7 @@ export function renderAdminLogin({ error = null, username = '' } = {}) {
       </div>
       <button class="btn-directions admin-submit" type="submit">ENTRAR</button>
     </form>
+    <p class="app-version">Ayuda Cerca · v${APP_VERSION}</p>
   </div>`;
 }
 
@@ -108,5 +110,6 @@ export function renderAdminMenu({ user, flash = null }) {
         <small>Salir de la zona de gestión en este aparato.</small></span>
       </button>
     </nav>
+    <p class="app-version">Ayuda Cerca · v${APP_VERSION}</p>
   </div>`;
 }
