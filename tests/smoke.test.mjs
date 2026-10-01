@@ -228,3 +228,8 @@ if (failed) {
 }
 console.log('\nSmoke test OK ✔\n');
 process.exit(0); // asegura salir aunque quede un timer de #/panel
+
+t('la home linkea a la guía y los términos', () => {
+  assert.match(appEl.innerHTML, /href="\.\/guia\/"/);
+  assert.match(appEl.innerHTML, /Guía y términos/);
+});

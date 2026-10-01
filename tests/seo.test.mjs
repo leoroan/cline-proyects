@@ -134,3 +134,10 @@ t('términos linkean al formulario, sin mailto', async () => {
   assert.ok(!tos.includes('mailto:'));
   assert.ok(!tos.includes('leoroan@gmail.com'));
 });
+
+t('contacto.js carga como MÓDULO (el export requiere type="module")', async () => {
+  const landing = await readFile(new URL('../guia/index.html', import.meta.url), 'utf-8');
+  assert.match(landing, /type="module" src="\.\/contacto\.js"/);
+  const tos = await readFile(new URL('../guia/terminos.html', import.meta.url), 'utf-8');
+  assert.match(tos, /type="module" src="\.\/contacto\.js"/);
+});

@@ -45,6 +45,7 @@ export function renderHome({ services, savedItems = [] }) {
     </nav>
     <footer class="home-footer">
       <a class="board-link" href="#/panel"><i class="bi bi-tv" aria-hidden="true"></i> <span>Modo pantalla para TV</span></a>
+      <a class="board-link" href="./guia/"><i class="bi bi-book-fill" aria-hidden="true"></i> <span>Guía y términos</span></a>
       <p class="app-version">Ayuda Cerca · v${APP_VERSION}</p>
     </footer>
   </div>`;
